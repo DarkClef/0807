@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Albüm Yönetimi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500&family=Sora:wght@300;400;500;600&family=Caveat:wght@500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#171b34;
+    --plum:#332a4d;
+    --rose:#e893a8;
+    --gold:#e8b75e;
+    --cream:#fbf5ea;
+    --lavender:#b6acd1;
+    --line:rgba(251,245,234,0.14);
+    --green:#6dbb8a;
+    --red:#d9607a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--cream);
+    font-family:'Sora',sans-serif;
+    font-weight:300;
+    min-height:100vh;
+  }
+
+  /* ===== LOGIN ===== */
+  #loginScreen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2rem;
+    background:radial-gradient(ellipse at 50% 30%, rgba(232,147,168,0.1), transparent 65%);
+  }
+  .login-card{
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:3rem 2.5rem;
+    width:100%;
+    max-width:400px;
+    text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,0.4);
+    backdrop-filter:blur(6px);
+  }
+  .login-card .icon{font-size:3rem;margin-bottom:1.2rem;display:block;}
+  .login-card h1{
+    font-family:'Fraunces',serif;
+    font-size:1.9rem;
+    font-weight:500;
+    margin-bottom:0.5rem;
+  }
+  .login-card p{color:var(--lavender);font-size:0.9rem;margin-bottom:2rem;}
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:0.5rem;
+    margin-bottom:1rem;
+    text-align:left;
+  }
+  .field label{
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--gold);
+  }
+  .field input{
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:0.85rem 1rem;
+    color:var(--cream);
+    font-family:'Sora',sans-serif;
+    font-size:0.95rem;
+    outline:none;
+    transition:border-color 0.25s;
+  }
+  .field input:focus{border-color:rgba(232,147,168,0.5);}
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:0.5rem;
+    padding:0.9rem 2rem;
+    border-radius:12px;
+    border:none;
+    font-family:'Sora',sans-serif;
+    font-size:0.95rem;
+    font-weight:500;
+    cursor:pointer;
+    transition:transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s;
+    width:100%;
+    margin-top:0.5rem;
+  }
+  .btn:hover{transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+  .btn:active{transform:translateY(0);}
+  .btn-primary{background:linear-gradient(135deg, var(--rose), #c96b87); color:#fff;}
+  .btn-danger{background:linear-gradient(135deg, var(--red), #a03050); color:#fff;}
+  .btn-outline{background:transparent;border:1px solid var(--line);color:var(--lavender);}
+  .btn-outline:hover{border-color:var(--rose);color:var(--cream);}
+  .login-error{
+    color:var(--red);
+    font-size:0.85rem;
+    margin-top:0.8rem;
+    display:none;
+  }
+
+  /* ===== ADMIN PANEL ===== */
+  #adminPanel{display:none;}
+  .admin-header{
+    background:rgba(255,255,255,0.02);
+    border-bottom:1px solid var(--line);
+    padding:1.2rem 2rem;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    flex-wrap:wrap;
+  }
+  .admin-header .brand{
+    display:flex;
+    align-items:center;
+    gap:0.8rem;
+  }
+  .admin-header .brand span{font-size:1.5rem;}
+  .admin-header h1{
+    font-family:'Fraunces',serif;
+    font-size:1.4rem;
+    font-weight:500;
+  }
+  .admin-header .actions{display:flex;gap:0.8rem;align-items:center;}
+  .admin-header .btn{width:auto;margin-top:0;}
+
+  .admin-body{padding:2.5rem 2rem;max-width:1000px;margin:0 auto;}
+
+  /* Upload zone */
+  .upload-zone{
+    border:2px dashed rgba(232,147,168,0.35);
+    border-radius:20px;
+    padding:3rem 2rem;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color 0.3s, background 0.3s;
+    position:relative;
+    margin-bottom:2.5rem;
+  }
+  .upload-zone:hover,.upload-zone.drag-over{
+    border-color:var(--rose);
+    background:rgba(232,147,168,0.05);
+  }
+  .upload-zone input[type="file"]{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    cursor:pointer;
+    width:100%;
+    height:100%;
+  }
+  .upload-zone .uz-icon{font-size:2.8rem;display:block;margin-bottom:0.8rem;}
+  .upload-zone p{color:var(--lavender);font-size:0.95rem;}
+  .upload-zone strong{color:var(--rose);}
+
+  /* Preview bar */
+  #previewBar{
+    display:none;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:1.5rem;
+    margin-bottom:2rem;
+  }
+  #previewBar h3{font-family:'Fraunces',serif;font-size:1.1rem;margin-bottom:1rem;}
+  .preview-list{display:flex;gap:0.8rem;flex-wrap:wrap;}
+  .preview-item{
+    position:relative;
+    width:80px;height:80px;
+    border-radius:10px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .preview-item img{width:100%;height:100%;object-fit:cover;}
+  .preview-item .remove-preview{
+    position:absolute;top:2px;right:2px;
+    width:20px;height:20px;
+    background:rgba(217,96,122,0.85);
+    border:none;border-radius:50%;
+    color:#fff;font-size:0.75rem;
+    cursor:pointer;display:flex;
+    align-items:center;justify-content:center;
+    line-height:1;
+  }
+  .upload-actions{display:flex;gap:0.8rem;margin-top:1rem;flex-wrap:wrap;}
+  .upload-actions .btn{width:auto;}
+
+  /* Toast */
+  #toast{
+    position:fixed;
+    bottom:2rem;right:2rem;
+    background:rgba(109,187,138,0.15);
+    border:1px solid rgba(109,187,138,0.4);
+    border-radius:12px;
+    padding:0.9rem 1.4rem;
+    color:var(--green);
+    font-size:0.9rem;
+    font-family:'Space Mono',monospace;
+    letter-spacing:0.05em;
+    opacity:0;
+    transform:translateY(10px);
+    transition:opacity 0.3s,transform 0.3s;
+    pointer-events:none;
+    z-index:999;
+  }
+  #toast.show{opacity:1;transform:translateY(0);}
+  #toast.error{
+    background:rgba(217,96,122,0.15);
+    border-color:rgba(217,96,122,0.4);
+    color:var(--red);
+  }
+
+  /* Section header */
+  .section-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:1.5rem;
+    flex-wrap:wrap;
+    gap:1rem;
+  }
+  .section-header h2{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:500;}
+  .badge{
+    background:rgba(232,147,168,0.15);
+    border:1px solid rgba(232,147,168,0.3);
+    color:var(--rose);
+    font-family:'Space Mono',monospace;
+    font-size:0.7rem;
+    letter-spacing:0.1em;
+    padding:0.25rem 0.65rem;
+    border-radius:999px;
+  }
+
+  /* Gallery grid */
+  .gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    gap:1rem;
+  }
+  .gallery-item{
+    position:relative;
+    border-radius:14px;
+    overflow:hidden;
+    aspect-ratio:1/1;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--line);
+    group:true;
+  }
+  .gallery-item img{width:100%;height:100%;object-fit:cover;display:block;}
+  .gallery-item .overlay{
+    position:absolute;inset:0;
+    background:rgba(23,27,52,0.75);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;
+    transition:opacity 0.25s;
+  }
+  .gallery-item:hover .overlay{opacity:1;}
+  .gallery-item .overlay button{
+    background:rgba(217,96,122,0.9);
+    border:none;border-radius:10px;
+    color:#fff;padding:0.5rem 1rem;
+    font-family:'Sora',sans-serif;
+    font-size:0.85rem;cursor:pointer;
+    transition:background 0.2s;
+  }
+  .gallery-item .overlay button:hover{background:var(--red);}
+  .gallery-empty{
+    color:var(--lavender);
+    font-size:0.95rem;
+    padding:3rem;
+    border:1px dashed var(--line);
+    border-radius:16px;
+    text-align:center;
+    grid-column:1/-1;
+  }
+  .drag-handle{
+    position:absolute;top:6px;left:6px;
+    background:rgba(23,27,52,0.7);
+    border-radius:6px;padding:2px 5px;
+    font-size:0.7rem;color:var(--lavender);
+    cursor:grab;
+  }
+
+  .stats-row{
+    display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;
+  }
+  .stat-card{
+    flex:1;min-width:140px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:1.2rem 1.5rem;
+  }
+  .stat-card .stat-label{
+    font-family:'Space Mono',monospace;
+    font-size:0.65rem;letter-spacing:0.2em;
+    text-transform:uppercase;color:var(--gold);
+    margin-bottom:0.5rem;
+  }
+  .stat-card .stat-value{
+    font-family:'Fraunces',serif;
+    font-size:2rem;font-weight:500;
+    color:var(--cream);
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginScreen">
+  <div class="login-card">
+    <span class="icon">🔑</span>
+    <h1>Admin Paneli</h1>
+    <p>Albüme fotoğraf eklemek için giriş yap</p>
+
+    <div class="field">
+      <label>Kullanıcı Adı</label>
+      <input type="text" id="loginUser" placeholder="kullanıcı adı" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>Şifre</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()">Giriş Yap</button>
+    <div class="login-error" id="loginError">Kullanıcı adı veya şifre hatalı.</div>
+  </div>
+</div>
+
+<!-- ===== ADMIN PANEL ===== -->
+<div id="adminPanel">
+  <div class="admin-header">
+    <div class="brand">
+      <span>💫</span>
+      <div>
+        <h1>Albüm Yönetimi</h1>
+      </div>
+    </div>
+    <div class="actions">
+      <a href="index.html" class="btn btn-outline" style="width:auto;text-decoration:none;">← Siteye Dön</a>
+      <button class="btn btn-outline" onclick="doLogout()">Çıkış</button>
+    </div>
+  </div>
+
+  <div class="admin-body">
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Toplam Fotoğraf</div>
+        <div class="stat-value" id="statCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Depolama</div>
+        <div class="stat-value" id="statSize">0 KB</div>
+      </div>
+    </div>
+
+    <!-- Upload zone -->
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="fileInput" accept="image/*" multiple>
+      <span class="uz-icon">📷</span>
+      <p><strong>Fotoğraf seç</strong> veya sürükle bırak</p>
+      <p style="margin-top:0.4rem;font-size:0.8rem;">JPG, PNG, WEBP · Birden fazla seçebilirsin</p>
+    </div>
+
+    <!-- Preview -->
+    <div id="previewBar">
+      <h3>Yüklemeye hazır</h3>
+      <div class="preview-list" id="previewList"></div>
+      <div class="upload-actions">
+        <button class="btn btn-primary" onclick="uploadAll()">✓ Hepsini Albüme Ekle</button>
+        <button class="btn btn-outline" onclick="clearPreview()">İptal</button>
+      </div>
+    </div>
+
+    <!-- Gallery -->
+    <div class="section-header">
+      <h2>Albümdeki Fotoğraflar</h2>
+      <span class="badge" id="photoCount">0 fotoğraf</span>
+    </div>
+
+    <div class="gallery-grid" id="galleryGrid"></div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ============================================================
+//  ⚙️  BURADAN ŞİFREYİ DEĞİŞTİR
+// ============================================================
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'seni.seviyorum';
+// ============================================================
+
+const STORAGE_KEY = 'album_photos';
+
+// ------- AUTH -------
+function doLogin(){
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if(u === ADMIN_USER && p === ADMIN_PASS){
+    sessionStorage.setItem('admin_auth','1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadGallery();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginPass').value = '';
+    setTimeout(()=>document.getElementById('loginError').style.display='none', 3000);
+  }
+}
+function doLogout(){
+  sessionStorage.removeItem('admin_auth');
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+// Enter tuşu ile giriş
+document.addEventListener('keydown', e=>{
+  if(e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none'){
+    doLogin();
+  }
+});
+// Oturum kontrolü
+if(sessionStorage.getItem('admin_auth') === '1'){
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'block';
+  loadGallery();
+}
+
+// ------- STORAGE -------
+function getPhotos(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e){ return []; }
+}
+function savePhotos(photos){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
+}
+
+// ------- UPLOAD -------
+let pendingFiles = [];
+
+document.getElementById('fileInput').addEventListener('change', function(){
+  handleFiles(Array.from(this.files));
+  this.value = '';
+});
+
+const uploadZone = document.getElementById('uploadZone');
+uploadZone.addEventListener('dragover', e=>{ e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', ()=>uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e=>{
+  e.preventDefault();
+  uploadZone.classList.remove('drag-over');
+  handleFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')));
+});
+
+function handleFiles(files){
+  if(!files.length) return;
+  files.forEach(file=>{
+    const reader = new FileReader();
+    reader.onload = e=>{
+      pendingFiles.push({ data: e.target.result, caption: file.name.replace(/\.[^.]+$/, ''), name: file.name });
+      renderPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderPreview(){
+  const bar = document.getElementById('previewBar');
+  const list = document.getElementById('previewList');
+  bar.style.display = pendingFiles.length ? 'block' : 'none';
+  list.innerHTML = '';
+  pendingFiles.forEach((f, i) => {
+    const item = document.createElement('div');
+    item.className = 'preview-item';
+    item.innerHTML = `<img src="${f.data}" alt="${f.caption}">
+      <button class="remove-preview" onclick="removePreview(${i})" title="Kaldır">&times;</button>`;
+    list.appendChild(item);
+  });
+}
+
+function removePreview(i){
+  pendingFiles.splice(i, 1);
+  renderPreview();
+}
+
+function clearPreview(){
+  pendingFiles = [];
+  renderPreview();
+}
+
+function uploadAll(){
+  if(!pendingFiles.length) return;
+  const photos = getPhotos();
+  pendingFiles.forEach(f => photos.push({ data: f.data, caption: f.caption, id: Date.now() + Math.random() }));
+  savePhotos(photos);
+  pendingFiles = [];
+  renderPreview();
+  loadGallery();
+  showToast(`${photos.length - (photos.length - pendingFiles.length)} fotoğraf eklendi ✓`, false);
+  showToast('Fotoğraflar albüme eklendi ✓', false);
+}
+
+// ------- GALLERY -------
+function loadGallery(){
+  const photos = getPhotos();
+  const grid = document.getElementById('galleryGrid');
+  const count = document.getElementById('photoCount');
+  const statCount = document.getElementById('statCount');
+  const statSize = document.getElementById('statSize');
+
+  count.textContent = photos.length + ' fotoğraf';
+  statCount.textContent = photos.length;
+
+  // Size estimate
+  const raw = localStorage.getItem(STORAGE_KEY) || '';
+  const kb = Math.round(raw.length * 2 / 1024);
+  const mb = (kb / 1024).toFixed(1);
+  statSize.textContent = kb > 1024 ? mb + ' MB' : kb + ' KB';
+
+  grid.innerHTML = '';
+  if(!photos.length){
+    grid.innerHTML = '<div class="gallery-empty">Henüz fotoğraf yok.<br>Yukarıdan ekleyebilirsin.</div>';
+    return;
+  }
+  photos.forEach((photo, i) => {
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    item.innerHTML = `
+      <img src="${photo.data}" alt="${photo.caption || 'Anı'}" loading="lazy">
+      <div class="overlay">
+        <button onclick="deletePhoto(${i})">🗑 Sil</button>
+      </div>`;
+    grid.appendChild(item);
+  });
+}
+
+function deletePhoto(i){
+  if(!confirm('Bu fotoğrafı silmek istediğine emin misin?')) return;
+  const photos = getPhotos();
+  photos.splice(i, 1);
+  savePhotos(photos);
+  loadGallery();
+  showToast('Fotoğraf silindi.', true);
+}
+
+// ------- TOAST -------
+let toastTimer;
+function showToast(msg, isError=false){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (isError ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.className='', 3000);
+}
+</script>
+
+</body>
+</html>

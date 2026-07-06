@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sana Dair</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Sora:wght@300;400;500;600&family=Caveat:wght@500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#171b34;
+    --plum:#332a4d;
+    --rose:#e893a8;
+    --gold:#e8b75e;
+    --cream:#fbf5ea;
+    --lavender:#b6acd1;
+    --line: rgba(251,245,234,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--cream);
+    font-family:'Sora', sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+    position:relative;
+  }
+  #stars{
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index:0;
+    pointer-events:none;
+  }
+  main{position:relative; z-index:1;}
+
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:1.1rem;
+    display:inline-block;
+  }
+  h1, h2, h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    line-height:1.08;
+  }
+  .script{
+    font-family:'Caveat', cursive;
+    color:var(--rose);
+  }
+
+  section{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:6rem 1.5rem;
+    text-align:center;
+    position:relative;
+  }
+
+  /* fade-in on scroll */
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  /* ---------- HERO ---------- */
+  #hero h1{
+    font-size:clamp(2.4rem, 7vw, 4.6rem);
+    max-width:16ch;
+  }
+  #hero .name-slot{
+    color:var(--rose);
+    font-family:'Caveat', cursive;
+    font-size:1.25em;
+  }
+  #hero .love-line{
+    margin-top:1.6rem;
+    font-family:'Caveat', cursive;
+    font-size:clamp(1.8rem, 5vw, 2.6rem);
+    color:var(--rose);
+    animation: heartbeat 2.2s ease-in-out infinite;
+  }
+  @keyframes heartbeat{
+    0%,100%{transform:scale(1);}
+    14%{transform:scale(1.08);}
+    28%{transform:scale(1);}
+    42%{transform:scale(1.05);}
+    56%{transform:scale(1);}
+  }
+  .scrolldown{
+    position:absolute;
+    bottom:2.4rem;
+    left:50%;
+    transform:translateX(-50%);
+    font-family:'Space Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.2em;
+    color:var(--lavender);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0.5rem;
+    animation:bob 2.2s ease-in-out infinite;
+  }
+  .scrolldown .stick{width:1px; height:34px; background:linear-gradient(var(--lavender), transparent);}
+  @keyframes bob{
+    0%,100%{transform:translateX(-50%) translateY(0);}
+    50%{transform:translateX(-50%) translateY(8px);}
+  }
+
+  /* ---------- FLIP COUNTER ---------- */
+  .counter-row{
+    display:flex;
+    gap:clamp(0.5rem, 2vw, 1.3rem);
+    margin-top:2.4rem;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .flip{
+    background:linear-gradient(180deg, #232849, #1b1f3a);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:1.1rem 0.4rem;
+    width:clamp(64px, 20vw, 100px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .flip .num{
+    font-family:'Space Mono', monospace;
+    font-size:clamp(1.6rem, 5vw, 2.6rem);
+    font-weight:700;
+    color:var(--cream);
+    font-variant-numeric:tabular-nums;
+  }
+  .flip .lbl{
+    margin-top:0.3rem;
+    font-size:0.62rem;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--lavender);
+  }
+
+  /* ---------- TOGETHER SECTION ---------- */
+  #together{background:radial-gradient(ellipse at 50% 20%, rgba(232,147,168,0.08), transparent 60%);}
+  #together h2{font-size:clamp(1.8rem, 5vw, 3rem); max-width:18ch;}
+  #together .subline{
+    margin-top:1rem;
+    color:var(--lavender);
+    max-width:40ch;
+    font-size:0.98rem;
+  }
+  .fun-stat{
+    margin-top:2.6rem;
+    font-family:'Caveat', cursive;
+    color:var(--gold);
+    font-size:1.6rem;
+    max-width:30ch;
+  }
+
+  /* ---------- BIRTHDAY MESSAGE ---------- */
+  #birthday-msg{
+    background:radial-gradient(ellipse at 50% 30%, rgba(232,147,168,0.18), transparent 65%),
+               radial-gradient(ellipse at 80% 80%, rgba(232,183,94,0.10), transparent 60%);
+    position:relative;
+    overflow:hidden;
+  }
+  #birthday-msg::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(232,147,168,0.02) 40px,
+      rgba(232,147,168,0.02) 80px
+    );
+    pointer-events:none;
+  }
+  #birthday-msg .bday-icon{
+    font-size:4rem;
+    margin-bottom:1.2rem;
+    display:block;
+    animation: spin-slow 8s linear infinite;
+  }
+  @keyframes spin-slow{
+    from{transform:rotate(0deg) scale(1);}
+    50%{transform:rotate(180deg) scale(1.1);}
+    to{transform:rotate(360deg) scale(1);}
+  }
+  #birthday-msg h2{
+    font-size:clamp(2rem, 6vw, 3.6rem);
+    max-width:20ch;
+    background:linear-gradient(135deg, var(--rose), var(--gold));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  #birthday-msg .bday-note{
+    margin-top:1.6rem;
+    max-width:48ch;
+    color:var(--lavender);
+    font-size:1.08rem;
+    line-height:1.75;
+  }
+  #birthday-msg .bday-note em{
+    color:var(--cream);
+    font-style:normal;
+  }
+  .bday-sign{
+    margin-top:2.4rem;
+    font-family:'Caveat', cursive;
+    font-size:2rem;
+    color:var(--rose);
+  }
+
+  /* ---------- ALBUM ---------- */
+  #album{
+    background:radial-gradient(ellipse at 30% 50%, rgba(182,172,209,0.07), transparent 60%);
+    padding-top:5rem;
+    padding-bottom:5rem;
+    min-height:auto;
+  }
+  #album h2{font-size:clamp(1.8rem, 5vw, 2.8rem); margin-bottom:0.6rem;}
+  #album .subline{color:var(--lavender); margin-bottom:3rem; font-size:0.95rem;}
+  .album-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+    gap:1.2rem;
+    max-width:960px;
+    width:100%;
+  }
+  .album-item{
+    position:relative;
+    border-radius:16px;
+    overflow:hidden;
+    aspect-ratio:1/1;
+    background:rgba(251,245,234,0.04);
+    border:1px solid var(--line);
+    cursor:pointer;
+    transition:transform 0.35s ease, box-shadow 0.35s ease;
+  }
+  .album-item:hover{
+    transform:scale(1.03) translateY(-4px);
+    box-shadow:0 20px 50px rgba(0,0,0,0.5);
+  }
+  .album-item img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .album-empty{
+    color:var(--lavender);
+    font-size:0.95rem;
+    padding:3rem;
+    border:1px dashed var(--line);
+    border-radius:16px;
+    max-width:400px;
+  }
+  /* Lightbox */
+  #lightbox{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(23,27,52,0.92);
+    z-index:100;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    backdrop-filter:blur(8px);
+  }
+  #lightbox.open{display:flex;}
+  #lightbox img{
+    max-width:90vw;
+    max-height:90vh;
+    border-radius:12px;
+    object-fit:contain;
+    box-shadow:0 30px 80px rgba(0,0,0,0.6);
+  }
+  #lightbox-close{
+    position:absolute;
+    top:1.2rem;
+    right:1.6rem;
+    color:var(--cream);
+    font-size:2rem;
+    cursor:pointer;
+    opacity:0.7;
+    transition:opacity 0.2s;
+    background:none;
+    border:none;
+    font-family:'Sora',sans-serif;
+    line-height:1;
+  }
+  #lightbox-close:hover{opacity:1;}
+
+  /* ---------- FINALE ---------- */
+  footer{
+    padding:4rem 1.5rem 3rem;
+    text-align:center;
+    color:var(--lavender);
+    font-size:0.85rem;
+  }
+
+  .hearts{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:5;
+    overflow:hidden;
+  }
+  .heart{
+    position:absolute;
+    top:-10%;
+    font-size:1.3rem;
+    color:var(--rose);
+    opacity:0.85;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{transform:translateY(115vh) rotate(200deg); opacity:0;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<main>
+
+  <!-- HERO -->
+  <section id="hero">
+    <h1 class="reveal">Canım <span class="name-slot">[ismini buraya yaz]</span>,<br>doğum günün yaklaşıyor</h1>
+    <p class="love-line reveal">Seni seviyorum ♥</p>
+
+    <div class="scrolldown"><span>aşağı kaydır</span><div class="stick"></div></div>
+  </section>
+
+  <!-- TOGETHER COUNTER -->
+  <section id="together">
+    <span class="eyebrow reveal">14 Haziran 2026 &middot; 20:15:34</span>
+    <h2 class="reveal">O andan beri <span class="script">birlikteyiz</span></h2>
+    <p class="subline reveal">O gün, o saatte başlayan hikaye, hâlâ her saniye büyüyor.</p>
+
+    <div class="counter-row reveal" id="togetherCounter">
+      <div class="flip"><div class="num" id="tg-days">0</div><div class="lbl">gün</div></div>
+      <div class="flip"><div class="num" id="tg-hours">00</div><div class="lbl">saat</div></div>
+      <div class="flip"><div class="num" id="tg-mins">00</div><div class="lbl">dakika</div></div>
+      <div class="flip"><div class="num" id="tg-secs">00</div><div class="lbl">saniye</div></div>
+    </div>
+
+    <p class="fun-stat reveal" id="funStat">yaklaşık 0 kalp atışı, seninle birlikte attı</p>
+  </section>
+
+  <!-- BIRTHDAY MESSAGE — sadece 8 Temmuz'da görünür -->
+  <section id="birthday-msg" style="display:none;">
+    <span class="bday-icon">🎂</span>
+    <span class="eyebrow reveal">8 Temmuz</span>
+    <h2 class="reveal">İyi ki doğdun, <span class="script">[ismi buraya yaz]</span> ✨</h2>
+    <p class="bday-note reveal">
+      Bugün senin günün. <em>Her şeyin en güzeli</em> olsun diyorum,<br>
+      ama en güzeli zaten seninle geçen her an.<br><br>
+      [Buraya ona özel mesajını yaz — bu yıl için dileklerin, ona hissettirdiklerin…]
+    </p>
+    <div class="bday-sign reveal">— Seni çok seviyorum ♥</div>
+  </section>
+
+  <!-- ALBÜMÜMÜZ -->
+  <section id="album">
+    <span class="eyebrow reveal">anılarımız</span>
+    <h2 class="reveal">Albümümüz</h2>
+    <p class="subline reveal">Birlikte yaşadığımız her güzel an</p>
+    <div class="album-grid reveal" id="albumGrid">
+      <!-- Fotoğraflar admin panelden yüklenir -->
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Bu sayfa, seninle geçen her saniyeye değdiği için yapıldı.
+</footer>
+
+<div class="hearts" id="hearts"></div>
+
+<!-- Lightbox -->
+<div id="lightbox">
+  <button id="lightbox-close" aria-label="Kapat">&times;</button>
+  <img id="lightbox-img" src="" alt="Fotoğraf">
+</div>
+
+<script>
+// ================= AYARLANABİLİR TARİHLER =================
+const TOGETHER_SINCE = new Date(2026, 5, 14, 20, 15, 34); // 14 Haziran 2026, 20:15:34
+const BIRTHDAY       = new Date(2026, 6, 8, 0, 0, 0);     // 8 Temmuz 2026, 00:00
+// ===========================================================
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function diffParts(from, to){
+  let ms = to - from;
+  if(ms < 0) ms = 0;
+  const s = Math.floor(ms/1000);
+  const days = Math.floor(s/86400);
+  const hours = Math.floor((s%86400)/3600);
+  const mins = Math.floor((s%3600)/60);
+  const secs = s%60;
+  return {days, hours, mins, secs};
+}
+
+function setCounter(prefix, parts, padDays){
+  document.getElementById(prefix+'-days').textContent = padDays ? pad(parts.days) : parts.days;
+  document.getElementById(prefix+'-hours').textContent = pad(parts.hours);
+  document.getElementById(prefix+'-mins').textContent = pad(parts.mins);
+  document.getElementById(prefix+'-secs').textContent = pad(parts.secs);
+}
+
+// Doğum günü mesajını sadece 8 Temmuzda göster
+function checkBirthday(){
+  const now = new Date();
+  const bdayStart = new Date(now.getFullYear(), 6, 8, 0, 0, 0);  // 8 Temmuz 00:00
+  const bdayEnd   = new Date(now.getFullYear(), 6, 8, 23, 59, 59); // 8 Temmuz 23:59
+  const section = document.getElementById('birthday-msg');
+  if(now >= bdayStart && now <= bdayEnd){
+    section.style.display = 'flex';
+    startHearts();
+  } else {
+    section.style.display = 'none';
+  }
+}
+
+function tick(){
+  const now = new Date();
+
+  // Birliktelik sayacı (yukarı sayar)
+  const tg = diffParts(TOGETHER_SINCE, now);
+  setCounter('tg', tg, true);
+
+  const totalMinutes = Math.floor((now - TOGETHER_SINCE)/60000);
+  const heartbeats = Math.max(0, totalMinutes) * 78; // ortalama nabız ~78/dk
+  document.getElementById('funStat').textContent =
+    `yaklaşık ${heartbeats.toLocaleString('tr-TR')} kalp atışı, seninle birlikte attı`;
+}
+tick();
+setInterval(tick, 1000);
+checkBirthday();
+
+// ================= ALBÜM =================
+function loadAlbum(){
+  const grid = document.getElementById('albumGrid');
+  let photos = [];
+  try { photos = JSON.parse(localStorage.getItem('album_photos') || '[]'); } catch(e){}
+
+  grid.innerHTML = '';
+
+  if(photos.length === 0){
+    grid.innerHTML = '<div class="album-empty">Henüz fotoğraf eklenmemiş.<br>Admin panelinden ekleyebilirsin.</div>';
+    return;
+  }
+
+  photos.forEach((photo, i) => {
+    const item = document.createElement('div');
+    item.className = 'album-item';
+    const img = document.createElement('img');
+    img.src = photo.data;
+    img.alt = photo.caption || 'Anı';
+    img.loading = 'lazy';
+    item.appendChild(img);
+    item.addEventListener('click', () => openLightbox(photo.data));
+    grid.appendChild(item);
+  });
+}
+
+function openLightbox(src){
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').src = src;
+  lb.classList.add('open');
+}
+
+document.getElementById('lightbox').addEventListener('click', (e) => {
+  if(e.target === document.getElementById('lightbox') || e.target === document.getElementById('lightbox-close')){
+    document.getElementById('lightbox').classList.remove('open');
+  }
+});
+
+loadAlbum();
+
+// ================= YILDIZ ARKA PLANI =================
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = document.body.scrollHeight;
+  generateStars();
+}
+function generateStars(){
+  const count = Math.floor((canvas.width * canvas.height) / 9000);
+  stars = [];
+  for(let i=0;i<count;i++){
+    stars.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      r: Math.random()*1.4 + 0.3,
+      phase: Math.random()*Math.PI*2,
+      speed: Math.random()*0.015 + 0.005
+    });
+  }
+}
+function drawStars(t){
+  ctx.clearRect(0,0,canvas.width, canvas.height);
+  for(const s of stars){
+    const twinkle = 0.5 + 0.5*Math.sin(t*s.speed + s.phase);
+    ctx.globalAlpha = 0.25 + twinkle*0.65;
+    ctx.fillStyle = '#fbf5ea';
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(drawStars);
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+requestAnimationFrame(drawStars);
+
+// ================= SCROLL REVEAL =================
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('visible'); }
+  });
+}, {threshold:0.15});
+revealEls.forEach(el=>io.observe(el));
+
+// ================= KALP YAĞMURU (doğum günü açılınca) =================
+let heartsStarted = false;
+function startHearts(){
+  if(heartsStarted) return;
+  heartsStarted = true;
+  const container = document.getElementById('hearts');
+  const symbols = ['♥','❤','♡'];
+  let count = 0;
+  const interval = setInterval(()=>{
+    if(count > 80){ clearInterval(interval); return; }
+    count++;
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    heart.style.left = Math.random()*100 + 'vw';
+    heart.style.fontSize = (Math.random()*1.4 + 0.8) + 'rem';
+    heart.style.animationDuration = (Math.random()*3 + 4) + 's';
+    container.appendChild(heart);
+    setTimeout(()=>heart.remove(), 8000);
+  }, 200);
+}
+</script>
+
+</body>
+</html>
