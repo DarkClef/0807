@@ -1,0 +1,8 @@
+{
+  "name": "sana-dair",
+  "version": "1.0.0",
+  "description": "Kişisel özel web sitesi",
+  "dependencies": {
+    "mongodb": "^6.7.0"
+  }
+}
