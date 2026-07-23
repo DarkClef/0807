@@ -20,10 +20,6 @@
     href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Sora:wght@300;400;500;600&family=Caveat:wght@500;600&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet">
 
-  <!-- Leaflet.js (Anı Haritası) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
   <style>
     :root {
       --ink: #171b34;
@@ -945,7 +941,6 @@
 
     <ul class="nav-links">
       <li><a href="#together">Birlikteliğimiz</a></li>
-      <li><a href="#map-section">Anı Haritası</a></li>
       <li><a href="#wheel-section">Karar Çarkı</a></li>
       <li><a href="#games-section">Oyunlar</a></li>
       <li><a href="#notes">Ortak Notlar</a></li>
@@ -960,9 +955,9 @@
 
   <!-- MOBILE BOTTOM DOCK -->
   <div class="mobile-dock">
-    <a href="#map-section" class="dock-item">
-      <span class="dock-icon">🗺️</span>
-      <span>Harita</span>
+    <a href="#together" class="dock-item">
+      <span class="dock-icon">💖</span>
+      <span>Biz</span>
     </a>
     <a href="#wheel-section" class="dock-item">
       <span class="dock-icon">🎡</span>
@@ -989,7 +984,7 @@
       <p class="love-line reveal">Seni seviyorum ♥</p>
 
       <div class="hero-buttons reveal">
-        <a href="#map-section" class="btn-hero">🗺️ Anı Haritamız</a>
+        <a href="#album" class="btn-hero">📸 Fotoğraf Galerimiz</a>
         <a href="#games-section" class="btn-hero" style="background:transparent; border:1px solid var(--line); box-shadow:none;">🎮 Mini Oyunlar</a>
       </div>
     </section>
@@ -1008,21 +1003,6 @@
       </div>
 
       <p class="fun-stat reveal" id="funStat">yaklaşık 0 kalp atışı, seninle birlikte attı</p>
-    </section>
-
-    <!-- 🌍 ANI HARİTASI (MEMORY MAP) -->
-    <section id="map-section">
-      <span class="eyebrow reveal">bizim haritamız</span>
-      <h2 class="reveal">🌍 Anı Haritası</h2>
-      <p style="color:var(--lavender); max-width:420px; font-size:0.9rem;" class="reveal">Birlikte gezdiğimiz, anı biriktirdiğimiz özel konumlar.</p>
-
-      <div style="margin-top:1rem;" class="reveal">
-        <button class="btn-nav" onclick="openAddPinModal()">+ Yeni Anı Konumu Ekle</button>
-      </div>
-
-      <div class="map-card-wrap reveal">
-        <div id="map"></div>
-      </div>
     </section>
 
     <!-- 🎡 KARAR ÇARKI (DECISION WHEEL) -->
@@ -1333,90 +1313,6 @@
     tick();
     setInterval(tick, 1000);
 
-    // ================= 🌍 ANI HARİTASI (LEAFLET.JS) =================
-    let map = null;
-    let markers = [];
-
-    function initMap() {
-      map = L.map('map').setView([39.9250, 32.8369], 6); // Default centered near Ankara
-
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO',
-        maxZoom: 18,
-      }).addTo(map);
-
-      loadMapPins();
-
-      map.on('click', (e) => {
-        document.getElementById('mapLat').value = e.latlng.lat.toFixed(5);
-        document.getElementById('mapLng').value = e.latlng.lng.toFixed(5);
-        openAddPinModal();
-      });
-    }
-
-    async function loadMapPins() {
-      try {
-        const res = await fetch('/api/map');
-        if (!res.ok) return;
-        const pins = await res.json();
-
-        // Clear existing markers
-        markers.forEach(m => map.removeLayer(m));
-        markers = [];
-
-        pins.forEach(pin => {
-          const heartIcon = L.divIcon({
-            html: '<div style="font-size:1.8rem; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4));">💖</div>',
-            className: 'custom-map-icon',
-            iconSize: [30, 30],
-            iconAnchor: [15, 15]
-          });
-
-          const popupContent = `
-            <div class="map-popup-card">
-              <h4>${escapeHtml(pin.title)}</h4>
-              <p>${escapeHtml(pin.note)}</p>
-              <div class="date">📅 ${escapeHtml(pin.date)}</div>
-            </div>
-          `;
-
-          const marker = L.marker([pin.lat, pin.lng], { icon: heartIcon })
-            .addTo(map)
-            .bindPopup(popupContent);
-
-          markers.push(marker);
-        });
-      } catch (err) { console.error('Map pins error:', err); }
-    }
-
-    function openAddPinModal() { document.getElementById('mapModal').classList.add('active'); }
-    function closeMapModal() { document.getElementById('mapModal').classList.remove('active'); }
-
-    async function saveMapPin() {
-      const title = document.getElementById('mapTitle').value.trim();
-      const note = document.getElementById('mapNote').value.trim();
-      const lat = document.getElementById('mapLat').value;
-      const lng = document.getElementById('mapLng').value;
-      const date = document.getElementById('mapDate').value.trim();
-
-      if (!title || !lat || !lng) { alert('Lütfen başlık ve konum bilgilerini doldurun.'); return; }
-
-      try {
-        const res = await fetch('/api/map', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, note, lat, lng, date })
-        });
-        if (!res.ok) throw new Error('Pin kaydedilemedi');
-        closeMapModal();
-        loadMapPins();
-      } catch (err) { alert(err.message); }
-    }
-
-    window.addEventListener('load', initMap);
-
-
-
     // ================= 🎡 KARAR ÇARKI (DECISION WHEEL) =================
     const wheelPresets = {
       movie: ['Sci-Fi Film', 'Romantik Komedi', 'Korku / Gerilim', 'Anime Dizisi', 'Nostalji Sinema', 'Belgesel'],
@@ -1424,7 +1320,7 @@
       activity: ['Birlikte Oyun 🎮', 'Açık Havada Yürüyüş 🌲', 'Fotoğraflara Bak 📸', 'Film Gecesi 🍿', 'Sohbet & Kahve ☕']
     };
 
-    let currentItems = [...wheelPresets.movie];
+    let currentItems = []; // Açılışta tamamen boş çark
     let startAngle = 0;
     let isSpinning = false;
 

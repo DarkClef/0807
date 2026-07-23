@@ -30,7 +30,7 @@ module.exports = async function handler(req, res) {
     // ── GET: Tüm fotoğrafları getir ──────────────────────────────────────────
     if (req.method === 'GET') {
       const photos = await col
-        .find({}, { projection: { data: 1, caption: 1, createdAt: 1 } })
+        .find({})
         .sort({ createdAt: -1 })
         .toArray();
       return res.status(200).json(photos);
@@ -38,25 +38,26 @@ module.exports = async function handler(req, res) {
 
     // ── POST: Fotoğraf yükle (Doğrudan ana sayfadan) ─────────────────────────
     if (req.method === 'POST') {
-      const { data, caption } = req.body || {};
-      if (!data || !data.startsWith('data:image')) {
-        return res.status(400).json({ error: 'Geçerli bir fotoğraf verisi gerekli' });
+      const { data, url, caption } = req.body || {};
+      const imgData = data || url;
+      if (!imgData) {
+        return res.status(400).json({ error: 'Geçerli bir fotoğraf verisi veya URL gereklidir.' });
       }
 
       // Vercel serverless ve MongoDB boyut sınırı kontrolü (~4MB max base64)
-      if (data.length > 4 * 1024 * 1024) {
+      if (imgData.length > 4 * 1024 * 1024) {
         return res.status(413).json({ error: 'Fotoğraf boyutu çok yüksek. Yüklenmeden önce sıkıştırılmalıdır.' });
       }
 
       const result = await col.insertOne({
-        data,
+        data: imgData,
         caption: caption || '',
         createdAt: new Date(),
       });
       return res.status(201).json({ _id: result.insertedId });
     }
 
-    // ── DELETE: Fotoğraf sil (Doğrudan ana sayfadan) ─────────────────────────
+    // ── DELETE: Fotoğraf sil ──────────────────────────────────────────────────
     if (req.method === 'DELETE') {
       const { id } = req.query;
       if (!id || !ObjectId.isValid(id)) {
