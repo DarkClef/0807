@@ -335,6 +335,10 @@
         <div class="stat-label">Fotoğraf</div>
         <div class="stat-value" id="statCount">—</div>
       </div>
+      <div class="stat-card">
+        <div class="stat-label">Ortak Notlar</div>
+        <div class="stat-value" id="statNotesCount">—</div>
+      </div>
     </div>
 
     <!-- Upload Zone -->
@@ -369,6 +373,15 @@
       <div class="skeleton"></div>
       <div class="skeleton"></div>
       <div class="skeleton"></div>
+    </div>
+
+    <!-- Notes Management Section -->
+    <div class="section-header" style="margin-top: 3rem;">
+      <h2>Ortak Notlar & Anılar</h2>
+      <span class="badge" id="notesBadge">0 not</span>
+    </div>
+    <div id="adminNotesList" style="display:flex; flex-direction:column; gap:0.8rem;">
+      <div style="color:var(--lavender); font-size:0.85rem;">Notlar yükleniyor...</div>
     </div>
 
   </div>
@@ -426,28 +439,35 @@ function showPanel() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'block';
   loadGallery();
+  loadAdminNotes();
 }
 
-// Enter ile giriş
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') doLogin();
-});
-
-// Oturum kontrolü
-if (authToken) showPanel();
-
-// ── IMAGE COMPRESSION ─────────────────────────────────────────
-function compressImage(file, maxW = 1400, quality = 0.85) {
-  return new Promise((resolve) => {
+// ── IMAGE COMPRESSION (Max 1200px, 0.78 quality) ─────────────
+function compressImage(file, maxW = 1200, maxH = 1200, quality = 0.78) {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Dosya okunamadı'));
     reader.onload = e => {
       const img = new Image();
+      img.onerror = () => reject(new Error('Görsel işlenemedi'));
       img.onload = () => {
         let w = img.width, h = img.height;
-        if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+        if (w > maxW || h > maxH) {
+          if (w > h) {
+            h = Math.round(h * maxW / w);
+            w = maxW;
+          } else {
+            w = Math.round(w * maxH / h);
+            h = maxH;
+          }
+        }
         const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, w, h);
         resolve(canvas.toDataURL('image/jpeg', quality));
       };
       img.src = e.target.result;
@@ -598,6 +618,73 @@ async function deletePhoto(id, btn) {
     showToast(err.message, true);
     btn.disabled = false;
   }
+}
+
+// ── NOTES MANAGEMENT ──────────────────────────────────────────
+async function loadAdminNotes() {
+  const container = document.getElementById('adminNotesList');
+  const notesBadge = document.getElementById('notesBadge');
+  const statNotesCount = document.getElementById('statNotesCount');
+
+  try {
+    const res = await fetch('/api/notes');
+    if (!res.ok) throw new Error('Notlar alınamadı');
+    const notes = await res.json();
+
+    notesBadge.textContent = notes.length + ' not';
+    if (statNotesCount) statNotesCount.textContent = notes.length;
+    container.innerHTML = '';
+
+    if (!notes.length) {
+      container.innerHTML = '<div style="color:var(--lavender); font-size:0.9rem; padding:1rem; border:1px dashed var(--line); border-radius:12px; text-align:center;">Henüz eklenmiş not yok.</div>';
+      return;
+    }
+
+    const categoryIcons = {
+      love: '💌 Sevgi Notu',
+      plan: '✈️ Gezi/Etkinlik',
+      todo: '🎬 Yapılacaklar',
+      memory: '✨ Anı'
+    };
+
+    notes.forEach(note => {
+      const card = document.createElement('div');
+      card.style.cssText = 'background:rgba(255,255,255,0.03); border:1px solid var(--line); border-radius:14px; padding:1rem 1.2rem; display:flex; justify-content:space-between; align-items:center; gap:1rem;';
+      const catText = categoryIcons[note.category] || '📝 Not';
+
+      card.innerHTML = `
+        <div>
+          <div style="font-size:0.75rem; color:var(--gold); margin-bottom:0.2rem; font-family:'Space Mono',monospace;">
+            ${catText} ${note.pinned ? '📌 [İğnelendi]' : ''} &middot; ${new Date(note.createdAt).toLocaleDateString('tr-TR')}
+          </div>
+          <div style="font-weight:500; font-size:1rem; margin-bottom:0.2rem;">${escapeHtml(note.title || 'Başlıksız Not')}</div>
+          <div style="font-size:0.88rem; color:var(--lavender); max-width:550px; line-height:1.4;">${escapeHtml(note.content)}</div>
+        </div>
+        <button class="btn btn-danger" style="padding:0.4rem 0.8rem; font-size:0.8rem;" onclick="deleteAdminNote('${note._id}', this)">Sil</button>
+      `;
+      container.appendChild(card);
+    });
+  } catch (err) {
+    container.innerHTML = '<div style="color:var(--red); font-size:0.85rem;">Notlar yüklenirken hata oluştu.</div>';
+  }
+}
+
+async function deleteAdminNote(id, btn) {
+  if (!confirm('Bu notu silmek istediğinize emin misiniz?')) return;
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/notes?id=' + id, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Not silinemedi');
+    showToast('Not silindi.');
+    loadAdminNotes();
+  } catch (err) {
+    showToast(err.message, true);
+    btn.disabled = false;
+  }
+}
+
+function escapeHtml(str) {
+  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // ── TOAST ─────────────────────────────────────────────────────

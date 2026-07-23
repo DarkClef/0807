@@ -4,7 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sana Dair</title>
+  <meta name="theme-color" content="#171b34">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Sana Dair — Bizim Özel Dünyamız</title>
+
+  <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
     href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Sora:wght@300;400;500;600&family=Caveat:wght@500;600&family=Space+Mono:wght@400;700&display=swap"
@@ -18,12 +23,16 @@
       --cream: #fbf5ea;
       --lavender: #b6acd1;
       --line: rgba(251, 245, 234, 0.14);
+      --card-bg: rgba(255, 255, 255, 0.04);
+      --card-border: rgba(251, 245, 234, 0.12);
+      --red: #d9607a;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     html {
@@ -54,6 +63,102 @@
       z-index: 1;
     }
 
+    /* ---------- NAVBAR ---------- */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      z-index: 90;
+      background: rgba(23, 27, 52, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      transition: background 0.3s ease;
+    }
+
+    .nav-brand {
+      font-family: 'Fraunces', serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--cream);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-brand span {
+      color: var(--rose);
+      font-family: 'Caveat', cursive;
+      font-size: 1.4rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--lavender);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 400;
+      transition: color 0.25s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--rose);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .btn-nav {
+      background: rgba(232, 147, 168, 0.12);
+      border: 1px solid rgba(232, 147, 168, 0.3);
+      color: var(--cream);
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-family: 'Sora', sans-serif;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.25s ease;
+    }
+
+    .btn-nav:hover {
+      background: var(--rose);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .btn-pwa {
+      background: linear-gradient(135deg, var(--gold), #c9933b);
+      color: #171b34;
+      border: none;
+      font-weight: 600;
+      animation: pulse-pwa 2.5s infinite;
+    }
+
+    @keyframes pulse-pwa {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(232, 183, 94, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(232, 183, 94, 0); }
+    }
+
+    /* ---------- COMMON TYPOGRAPHY & SECTIONS ---------- */
     .eyebrow {
       font-family: 'Space Mono', monospace;
       font-size: 0.72rem;
@@ -64,9 +169,7 @@
       display: inline-block;
     }
 
-    h1,
-    h2,
-    h3 {
+    h1, h2, h3 {
       font-family: 'Fraunces', serif;
       font-weight: 500;
       line-height: 1.08;
@@ -83,12 +186,11 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 6rem 1.5rem;
+      padding: 7rem 1.5rem 5rem;
       text-align: center;
       position: relative;
     }
 
-    /* fade-in on scroll */
     .reveal {
       opacity: 0;
       transform: translateY(28px);
@@ -101,47 +203,56 @@
     }
 
     /* ---------- HERO ---------- */
-    #hero h1 {
-      font-size: clamp(2.4rem, 7vw, 4.6rem);
-      max-width: 16ch;
+    #hero {
+      background: radial-gradient(ellipse at 50% 40%, rgba(232, 147, 168, 0.15), transparent 70%);
     }
 
-    #hero .name-slot {
-      color: var(--rose);
-      font-family: 'Caveat', cursive;
-      font-size: 1.25em;
+    #hero h1 {
+      font-size: clamp(2.6rem, 7.5vw, 4.8rem);
+      max-width: 16ch;
+      line-height: 1.15;
     }
 
     #hero .love-line {
       margin-top: 1.6rem;
       font-family: 'Caveat', cursive;
-      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-size: clamp(2rem, 5.5vw, 3rem);
       color: var(--rose);
       animation: heartbeat 2.2s ease-in-out infinite;
     }
 
     @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      14% { transform: scale(1.08); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.05); }
+      56% { transform: scale(1); }
+    }
 
-      0%,
-      100% {
-        transform: scale(1);
-      }
+    .hero-buttons {
+      margin-top: 2.2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-      14% {
-        transform: scale(1.08);
-      }
+    .btn-hero {
+      background: linear-gradient(135deg, var(--rose), #c96b87);
+      color: #fff;
+      padding: 0.85rem 1.8rem;
+      border-radius: 16px;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+      box-shadow: 0 10px 30px rgba(232, 147, 168, 0.3);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
 
-      28% {
-        transform: scale(1);
-      }
-
-      42% {
-        transform: scale(1.05);
-      }
-
-      56% {
-        transform: scale(1);
-      }
+    .btn-hero:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(232, 147, 168, 0.45);
     }
 
     .scrolldown {
@@ -167,52 +278,11 @@
     }
 
     @keyframes bob {
-
-      0%,
-      100% {
-        transform: translateX(-50%) translateY(0);
-      }
-
-      50% {
-        transform: translateX(-50%) translateY(8px);
-      }
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
     }
 
-    /* ---------- FLIP COUNTER ---------- */
-    .counter-row {
-      display: flex;
-      gap: clamp(0.5rem, 2vw, 1.3rem);
-      margin-top: 2.4rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .flip {
-      background: linear-gradient(180deg, #232849, #1b1f3a);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 1.1rem 0.4rem;
-      width: clamp(64px, 20vw, 100px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    }
-
-    .flip .num {
-      font-family: 'Space Mono', monospace;
-      font-size: clamp(1.6rem, 5vw, 2.6rem);
-      font-weight: 700;
-      color: var(--cream);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .flip .lbl {
-      margin-top: 0.3rem;
-      font-size: 0.62rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--lavender);
-    }
-
-    /* ---------- TOGETHER SECTION ---------- */
+    /* ---------- TOGETHER COUNTER ---------- */
     #together {
       background: radial-gradient(ellipse at 50% 20%, rgba(232, 147, 168, 0.08), transparent 60%);
     }
@@ -229,82 +299,45 @@
       font-size: 0.98rem;
     }
 
+    .counter-row {
+      display: flex;
+      gap: clamp(0.5rem, 2vw, 1.3rem);
+      margin-top: 2.4rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .flip {
+      background: linear-gradient(180deg, #232849, #1b1f3a);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1.2rem 0.6rem;
+      width: clamp(70px, 20vw, 110px);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .flip .num {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(1.7rem, 5vw, 2.8rem);
+      font-weight: 700;
+      color: var(--cream);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .flip .lbl {
+      margin-top: 0.4rem;
+      font-size: 0.64rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--lavender);
+    }
+
     .fun-stat {
       margin-top: 2.6rem;
       font-family: 'Caveat', cursive;
       color: var(--gold);
-      font-size: 1.6rem;
-      max-width: 30ch;
-    }
-
-    /* ---------- BIRTHDAY MESSAGE ---------- */
-    #birthday-msg {
-      background: radial-gradient(ellipse at 50% 30%, rgba(232, 147, 168, 0.18), transparent 65%),
-        radial-gradient(ellipse at 80% 80%, rgba(232, 183, 94, 0.10), transparent 60%);
-      position: relative;
-      overflow: hidden;
-    }
-
-    #birthday-msg::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(45deg,
-          transparent,
-          transparent 40px,
-          rgba(232, 147, 168, 0.02) 40px,
-          rgba(232, 147, 168, 0.02) 80px);
-      pointer-events: none;
-    }
-
-    #birthday-msg .bday-icon {
-      font-size: 4rem;
-      margin-bottom: 1.2rem;
-      display: block;
-      animation: spin-slow 8s linear infinite;
-    }
-
-    @keyframes spin-slow {
-      from {
-        transform: rotate(0deg) scale(1);
-      }
-
-      50% {
-        transform: rotate(180deg) scale(1.1);
-      }
-
-      to {
-        transform: rotate(360deg) scale(1);
-      }
-    }
-
-    #birthday-msg h2 {
-      font-size: clamp(2rem, 6vw, 3.6rem);
-      max-width: 20ch;
-      background: linear-gradient(135deg, var(--rose), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    #birthday-msg .bday-note {
-      margin-top: 1.6rem;
-      max-width: 48ch;
-      color: var(--lavender);
-      font-size: 1.08rem;
-      line-height: 1.75;
-    }
-
-    #birthday-msg .bday-note em {
-      color: var(--cream);
-      font-style: normal;
-    }
-
-    .bday-sign {
-      margin-top: 2.4rem;
-      font-family: 'Caveat', cursive;
-      font-size: 2rem;
-      color: var(--rose);
+      font-size: 1.7rem;
+      max-width: 32ch;
     }
 
     /* ---------- ALBUM ---------- */
@@ -322,21 +355,21 @@
 
     #album .subline {
       color: var(--lavender);
-      margin-bottom: 3rem;
+      margin-bottom: 2.5rem;
       font-size: 0.95rem;
     }
 
     .album-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 1.2rem;
-      max-width: 960px;
+      max-width: 980px;
       width: 100%;
     }
 
     .album-item {
       position: relative;
-      border-radius: 16px;
+      border-radius: 18px;
       overflow: hidden;
       aspect-ratio: 1/1;
       background: rgba(251, 245, 234, 0.04);
@@ -364,6 +397,7 @@
       border: 1px dashed var(--line);
       border-radius: 16px;
       max-width: 400px;
+      grid-column: 1 / -1;
     }
 
     /* Lightbox */
@@ -371,12 +405,12 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(23, 27, 52, 0.92);
+      background: rgba(23, 27, 52, 0.94);
       z-index: 100;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
     }
 
     #lightbox.open {
@@ -385,32 +419,284 @@
 
     #lightbox img {
       max-width: 90vw;
-      max-height: 90vh;
-      border-radius: 12px;
+      max-height: 85vh;
+      border-radius: 14px;
       object-fit: contain;
       box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
     }
 
     #lightbox-close {
       position: absolute;
-      top: 1.2rem;
-      right: 1.6rem;
+      top: 1.4rem;
+      right: 1.8rem;
       color: var(--cream);
-      font-size: 2rem;
+      font-size: 2.2rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    /* ---------- SHARED NOTES SECTION ---------- */
+    #notes {
+      background: radial-gradient(ellipse at 70% 30%, rgba(232, 147, 168, 0.09), transparent 65%);
+      min-height: auto;
+      padding-top: 5rem;
+      padding-bottom: 6rem;
+    }
+
+    #notes h2 {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      margin-bottom: 0.6rem;
+    }
+
+    #notes .subline {
+      color: var(--lavender);
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .notes-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 2.2rem;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .cat-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--line);
+      color: var(--lavender);
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-family: 'Sora', sans-serif;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .cat-btn.active, .cat-btn:hover {
+      background: rgba(232, 147, 168, 0.18);
+      border-color: var(--rose);
+      color: var(--cream);
+    }
+
+    .btn-add-note {
+      background: linear-gradient(135deg, var(--rose), #c96b87);
+      color: #fff;
+      border: none;
+      padding: 0.65rem 1.4rem;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      font-family: 'Sora', sans-serif;
+      cursor: pointer;
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 6px 20px rgba(232, 147, 168, 0.25);
+      transition: transform 0.2s;
+    }
+
+    .btn-add-note:hover {
+      transform: scale(1.03);
+    }
+
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1.2rem;
+      max-width: 980px;
+      width: 100%;
+      text-align: left;
+    }
+
+    .note-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 1.4rem;
+      position: relative;
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .note-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(232, 147, 168, 0.4);
+    }
+
+    .note-card.pinned {
+      border-color: rgba(232, 183, 94, 0.5);
+      background: linear-gradient(145deg, rgba(232, 183, 94, 0.08), rgba(255, 255, 255, 0.02));
+    }
+
+    .note-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+    }
+
+    .note-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      background: rgba(232, 183, 94, 0.12);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+    }
+
+    .note-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+    }
+
+    .note-body {
+      color: var(--lavender);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      margin-bottom: 1.2rem;
+    }
+
+    .note-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: rgba(251, 245, 234, 0.45);
+      border-top: 1px solid rgba(251, 245, 234, 0.08);
+      padding-top: 0.8rem;
+    }
+
+    .note-actions {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .note-btn {
+      background: none;
+      border: none;
+      color: var(--lavender);
+      font-size: 0.9rem;
       cursor: pointer;
       opacity: 0.7;
       transition: opacity 0.2s;
-      background: none;
-      border: none;
-      font-family: 'Sora', sans-serif;
-      line-height: 1;
     }
 
-    #lightbox-close:hover {
+    .note-btn:hover {
       opacity: 1;
     }
 
-    /* ---------- FINALE ---------- */
+    /* ---------- NOTE MODAL ---------- */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 18, 35, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 120;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #1e2242;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+      text-align: left;
+    }
+
+    .modal-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 1.2rem;
+      color: var(--cream);
+    }
+
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      color: var(--cream);
+      font-family: 'Sora', sans-serif;
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .form-group select {
+      color: var(--cream);
+      background-color: #232849;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: var(--rose);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: flex-end;
+      margin-top: 1.6rem;
+    }
+
+    .btn-modal {
+      padding: 0.7rem 1.3rem;
+      border-radius: 12px;
+      border: none;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .btn-modal-primary {
+      background: linear-gradient(135deg, var(--rose), #c96b87);
+      color: #fff;
+    }
+
+    .btn-modal-secondary {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--lavender);
+    }
+
+    /* ---------- FOOTER ---------- */
     footer {
       padding: 4rem 1.5rem 3rem;
       text-align: center;
@@ -441,13 +727,6 @@
         opacity: 0;
       }
     }
-
-    @media (prefers-reduced-motion: reduce) {
-      * {
-        animation: none !important;
-        transition: none !important;
-      }
-    }
   </style>
 </head>
 
@@ -455,11 +734,32 @@
 
   <canvas id="stars"></canvas>
 
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="#hero" class="nav-brand">💫 <span>Sana Dair</span></a>
+
+    <ul class="nav-links">
+      <li><a href="#together">Birlikteliğimiz</a></li>
+      <li><a href="#album">Albümümüz</a></li>
+      <li><a href="#notes">Ortak Notlar</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button id="pwaBtn" class="btn-nav btn-pwa" style="display:none;" onclick="installPWA()">📱 Uygulamayı Yükle</button>
+      <button id="musicBtn" class="btn-nav" onclick="toggleAudio()">🎵 <span id="musicLabel">Müzik Aç</span></button>
+    </div>
+  </nav>
+
   <main>
 
     <!-- HERO -->
     <section id="hero">
       <p class="love-line reveal">Seni seviyorum ♥</p>
+
+      <div class="hero-buttons reveal">
+        <a href="#notes" class="btn-hero">💌 Ortak Notlarımıza Bak</a>
+        <a href="#album" class="btn-hero" style="background:transparent; border:1px solid var(--line); box-shadow:none;">📸 Fotoğraf Albümü</a>
+      </div>
 
       <div class="scrolldown"><span>aşağı kaydır</span>
         <div class="stick"></div>
@@ -494,24 +794,6 @@
       <p class="fun-stat reveal" id="funStat">yaklaşık 0 kalp atışı, seninle birlikte attı</p>
     </section>
 
-    <!-- BIRTHDAY MESSAGE — sadece 8 Temmuz'da görünür -->
-    <section id="birthday-msg" style="display:none;">
-      <span class="bday-icon">🎂</span>
-      <span class="eyebrow reveal">8 Temmuz</span>
-      <h2 class="reveal">İyi ki doğdun, <span class="script">Sevgilim</span> ✨</h2>
-      <p class="bday-note reveal">
-        Bugün senin günün. <em>Her şeyin en güzeli</em> olsun diyorum,<br>
-        ama en güzeli zaten seninle geçen her an.<br><br>
-        Sen hayatıma girdiğinden beri her şey daha anlamlı, daha parlak. <em>Her an</em> seninle ayrı bir güzel, ama
-        bugün senin günün; tüm güzellikler sana layık.<br><br>
-        Umarım hayat boyu seninle gülerim, seninle büyürüm, seninle yaşlanırım. İyi ki benimlesin, iyi ki
-        hayatımdasın.<br><br>
-        Bu sayfada biriken anılar gibi, hayatımızdaki her an da benim için çok değerli. Seninle geçen her saniyeye
-        şükrediyorum.
-      </p>
-      <div class="bday-sign reveal">— Seni çok seviyorum ♥</div>
-    </section>
-
     <!-- ALBÜMÜMÜZ -->
     <section id="album">
       <span class="eyebrow reveal">anılarımız</span>
@@ -522,12 +804,33 @@
       </div>
     </section>
 
+    <!-- BİZİM NOTLARIMIZ / ORTAK NOTLAR -->
+    <section id="notes">
+      <span class="eyebrow reveal">bizim köşemiz</span>
+      <h2 class="reveal">Ortak Notlarımız & Anılarımız</h2>
+      <p class="subline reveal">İkimizin paylaştığı notlar, hayaller, yapılacaklar ve tatlı mesajlar.</p>
+
+      <div class="notes-toolbar reveal">
+        <button class="cat-btn active" onclick="filterNotes('all', this)">Tümü</button>
+        <button class="cat-btn" onclick="filterNotes('love', this)">💌 Sevgi Notları</button>
+        <button class="cat-btn" onclick="filterNotes('plan', this)">✈️ Gezi & Planlar</button>
+        <button class="cat-btn" onclick="filterNotes('todo', this)">🎬 Yapılacaklar</button>
+        <button class="cat-btn" onclick="filterNotes('memory', this)">✨ Anılar</button>
+
+        <button class="btn-add-note" onclick="openNoteModal()">+ Not Ekle</button>
+      </div>
+
+      <div class="notes-grid reveal" id="notesGrid">
+        <div style="color:var(--lavender); grid-column:1/-1; text-align:center;">Notlar yükleniyor...</div>
+      </div>
+    </section>
+
   </main>
 
   <footer>
     Bu sayfa, seninle geçen her saniyeye değdiği için yapıldı.
     <br>
-    <a href="admin.html" id="admin-link" style="display:inline-block;margin-top:1.8rem;opacity:0.12;font-size:0.65rem;color:var(--lavender);text-decoration:none;letter-spacing:0.1em;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.4'" onmouseleave="this.style.opacity='0.12'">admin</a>
+    <a href="admin.html" id="admin-link" style="display:inline-block;margin-top:1.8rem;opacity:0.18;font-size:0.7rem;color:var(--lavender);text-decoration:none;letter-spacing:0.1em;transition:opacity 0.3s;" onmouseenter="this.style.opacity='0.6'" onmouseleave="this.style.opacity='0.18'">admin paneli</a>
   </footer>
 
   <div class="hearts" id="hearts"></div>
@@ -538,11 +841,67 @@
     <img id="lightbox-img" src="" alt="Fotoğraf">
   </div>
 
+  <!-- NOTE MODAL -->
+  <div class="modal-overlay" id="noteModal">
+    <div class="modal-card">
+      <h3>Yeni Not / Anı Ekle ✨</h3>
+      <div class="form-group">
+        <label>Başlık (Opsiyonel)</label>
+        <input type="text" id="modalTitle" placeholder="Örn: Hafta Sonu Planımız">
+      </div>
+      <div class="form-group">
+        <label>Kategori</label>
+        <select id="modalCategory">
+          <option value="love">💌 Sevgi Notu</option>
+          <option value="plan">✈️ Gezi & Planlar</option>
+          <option value="todo">🎬 Yapılacaklar</option>
+          <option value="memory">✨ Anı / Not</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Kimden</label>
+        <input type="text" id="modalAuthor" placeholder="Örn: Ben / Sevgilim">
+      </div>
+      <div class="form-group">
+        <label>Not İçeriği</label>
+        <textarea id="modalContent" rows="4" placeholder="Buraya bir şeyler yaz..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal btn-modal-secondary" onclick="closeNoteModal()">İptal</button>
+        <button class="btn-modal btn-modal-primary" onclick="saveNote()">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // ================= PWA INSTALLATION LOGIC =================
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const pwaBtn = document.getElementById('pwaBtn');
+      if (pwaBtn) pwaBtn.style.display = 'inline-flex';
+    });
+
+    async function installPWA() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        document.getElementById('pwaBtn').style.display = 'none';
+      }
+      deferredPrompt = null;
+    }
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW hatası:', err));
+      });
+    }
+
     // ================= AYARLANABİLİR TARİHLER =================
     const TOGETHER_SINCE = new Date(2026, 5, 14, 20, 15, 34); // 14 Haziran 2026, 20:15:34
-    const BIRTHDAY = new Date(2026, 6, 8, 0, 0, 0);     // 8 Temmuz 2026, 00:00
-    // ===========================================================
 
     function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -564,35 +923,18 @@
       document.getElementById(prefix + '-secs').textContent = pad(parts.secs);
     }
 
-    // Doğum günü mesajını sadece 8 Temmuzda göster
-    function checkBirthday() {
-      const now = new Date();
-      const bdayStart = new Date(now.getFullYear(), 6, 8, 0, 0, 0);  // 8 Temmuz 00:00
-      const bdayEnd = new Date(now.getFullYear(), 6, 8, 23, 59, 59); // 8 Temmuz 23:59
-      const section = document.getElementById('birthday-msg');
-      if (now >= bdayStart && now <= bdayEnd) {
-        section.style.display = 'flex';
-        startHearts();
-      } else {
-        section.style.display = 'none';
-      }
-    }
-
     function tick() {
       const now = new Date();
-
-      // Birliktelik sayacı (yukarı sayar)
       const tg = diffParts(TOGETHER_SINCE, now);
       setCounter('tg', tg, true);
 
       const totalMinutes = Math.floor((now - TOGETHER_SINCE) / 60000);
-      const heartbeats = Math.max(0, totalMinutes) * 78; // ortalama nabız ~78/dk
+      const heartbeats = Math.max(0, totalMinutes) * 78;
       document.getElementById('funStat').textContent =
         `yaklaşık ${heartbeats.toLocaleString('tr-TR')} kalp atışı, seninle birlikte attı`;
     }
     tick();
     setInterval(tick, 1000);
-    checkBirthday();
 
     // ================= ALBÜM (API) =================
     async function loadAlbum() {
@@ -607,7 +949,7 @@
         grid.innerHTML = '';
 
         if (!photos.length) {
-          grid.innerHTML = '<div class="album-empty">Henüz fotoğraf eklenmemiş.</div>';
+          grid.innerHTML = '<div class="album-empty">Henüz fotoğraf eklenmemiş.<br>Admin panelinden ekleyebilirsiniz.</div>';
           return;
         }
 
@@ -641,6 +983,192 @@
     });
 
     loadAlbum();
+
+    // ================= ORTAK NOTLAR (API) =================
+    let allNotes = [];
+    let activeFilter = 'all';
+
+    async function loadNotes() {
+      const grid = document.getElementById('notesGrid');
+      grid.innerHTML = '<div style="color:var(--lavender); grid-column:1/-1; text-align:center;">Notlar yükleniyor...</div>';
+
+      try {
+        const res = await fetch('/api/notes');
+        if (!res.ok) throw new Error('Notlar alınamadı');
+        allNotes = await res.json();
+        renderNotes();
+      } catch (err) {
+        grid.innerHTML = '<div style="color:var(--rose); grid-column:1/-1; text-align:center;">Notlar yüklenirken bir sorun oluştu.</div>';
+      }
+    }
+
+    function renderNotes() {
+      const grid = document.getElementById('notesGrid');
+      grid.innerHTML = '';
+
+      const filtered = activeFilter === 'all'
+        ? allNotes
+        : allNotes.filter(n => n.category === activeFilter);
+
+      if (!filtered.length) {
+        grid.innerHTML = '<div style="color:var(--lavender); grid-column:1/-1; text-align:center; padding:2rem; border:1px dashed var(--line); border-radius:16px;">Henüz bu kategoride not bulunmuyor. İlk notu siz ekleyin! ✨</div>';
+        return;
+      }
+
+      const catBadges = {
+        love: '💌 Sevgi Notu',
+        plan: '✈️ Gezi & Plan',
+        todo: '🎬 Yapılacaklar',
+        memory: '✨ Anı'
+      };
+
+      filtered.forEach(note => {
+        const card = document.createElement('div');
+        card.className = 'note-card' + (note.pinned ? ' pinned' : '');
+
+        const badgeText = catBadges[note.category] || '📝 Not';
+        const dateStr = note.createdAt ? new Date(note.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }) : '';
+
+        card.innerHTML = `
+          <div>
+            <div class="note-header">
+              <span class="note-tag">${badgeText}</span>
+              ${note.pinned ? '<span style="font-size:0.85rem;" title="İğnelenmiş Not">📌</span>' : ''}
+            </div>
+            ${note.title ? `<div class="note-title">${escapeHtml(note.title)}</div>` : ''}
+            <div class="note-body">${escapeHtml(note.content)}</div>
+          </div>
+          <div class="note-footer">
+            <span>✍️ ${escapeHtml(note.author || 'Biz')} &middot; ${dateStr}</span>
+            <div class="note-actions">
+              <button class="note-btn" title="${note.pinned ? 'İğneyi Kaldır' : 'İğnele'}" onclick="togglePin('${note._id}', ${!note.pinned})">📌</button>
+              <button class="note-btn" title="Sil" onclick="deleteNote('${note._id}')">🗑</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterNotes(cat, btn) {
+      activeFilter = cat;
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderNotes();
+    }
+
+    function openNoteModal() {
+      document.getElementById('noteModal').classList.add('active');
+    }
+
+    function closeNoteModal() {
+      document.getElementById('noteModal').classList.remove('active');
+      document.getElementById('modalTitle').value = '';
+      document.getElementById('modalContent').value = '';
+    }
+
+    async function saveNote() {
+      const title = document.getElementById('modalTitle').value.trim();
+      const category = document.getElementById('modalCategory').value;
+      const author = document.getElementById('modalAuthor').value.trim() || 'Biz';
+      const content = document.getElementById('modalContent').value.trim();
+
+      if (!content) {
+        alert('Lütfen bir not içeriği girin.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/notes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, category, author, content })
+        });
+        if (!res.ok) throw new Error('Not kaydedilemedi');
+        closeNoteModal();
+        loadNotes();
+      } catch (err) {
+        alert('Hata: ' + err.message);
+      }
+    }
+
+    async function togglePin(id, pinned) {
+      try {
+        await fetch('/api/notes?id=' + id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pinned })
+        });
+        loadNotes();
+      } catch (err) { console.error(err); }
+    }
+
+    async function deleteNote(id) {
+      if (!confirm('Bu notu silmek istediğinize emin misiniz?')) return;
+      try {
+        await fetch('/api/notes?id=' + id, { method: 'DELETE' });
+        loadNotes();
+      } catch (err) { console.error(err); }
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    loadNotes();
+
+    // ================= ROMANTİK MÜZİK (WEB AUDIO AMBIENT CHORDS) =================
+    let audioCtx = null;
+    let isPlayingAudio = false;
+    let timerId = null;
+
+    function toggleAudio() {
+      const btnLabel = document.getElementById('musicLabel');
+      if (isPlayingAudio) {
+        isPlayingAudio = false;
+        if (timerId) clearInterval(timerId);
+        if (audioCtx) audioCtx.suspend();
+        btnLabel.textContent = 'Müzik Aç';
+      } else {
+        isPlayingAudio = true;
+        btnLabel.textContent = 'Müzik Kapat 🎵';
+        playAmbientChords();
+      }
+    }
+
+    function playAmbientChords() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } else if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      const notes = [261.63, 329.63, 392.00, 493.88, 523.25]; // C major 7 chord
+      let idx = 0;
+
+      function playNote() {
+        if (!isPlayingAudio) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.value = notes[idx % notes.length];
+        idx++;
+
+        gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 1.2);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 3.8);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 4);
+      }
+
+      playNote();
+      timerId = setInterval(playNote, 2200);
+    }
 
     // ================= YILDIZ ARKA PLANI =================
     const canvas = document.getElementById('stars');
@@ -688,30 +1216,24 @@
       entries.forEach(e => {
         if (e.isIntersecting) { e.target.classList.add('visible'); }
       });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.12 });
     revealEls.forEach(el => io.observe(el));
 
-    // ================= KALP YAĞMURU (doğum günü açılınca) =================
-    let heartsStarted = false;
-    function startHearts() {
-      if (heartsStarted) return;
-      heartsStarted = true;
+    // ================= KALP YAĞMURU =================
+    (function startSubtleHearts() {
       const container = document.getElementById('hearts');
       const symbols = ['♥', '❤', '♡'];
-      let count = 0;
-      const interval = setInterval(() => {
-        if (count > 80) { clearInterval(interval); return; }
-        count++;
+      setInterval(() => {
         const heart = document.createElement('div');
         heart.className = 'heart';
         heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
         heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.fontSize = (Math.random() * 1.4 + 0.8) + 'rem';
-        heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+        heart.style.fontSize = (Math.random() * 1.2 + 0.7) + 'rem';
+        heart.style.animationDuration = (Math.random() * 4 + 5) + 's';
         container.appendChild(heart);
-        setTimeout(() => heart.remove(), 8000);
-      }, 200);
-    }
+        setTimeout(() => heart.remove(), 9000);
+      }, 1800);
+    })();
   </script>
 
 </body>

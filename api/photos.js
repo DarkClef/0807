@@ -46,6 +46,12 @@ module.exports = async function handler(req, res) {
       if (!data || !data.startsWith('data:image')) {
         return res.status(400).json({ error: 'Geçerli bir fotoğraf verisi gerekli' });
       }
+
+      // Vercel serverless ve MongoDB boyut sınırı kontrolü (~3.5MB max base64)
+      if (data.length > 4 * 1024 * 1024) {
+        return res.status(413).json({ error: 'Fotoğraf boyutu çok yüksek. Yüklenmeden önce sıkıştırılmalıdır.' });
+      }
+
       const result = await col.insertOne({
         data,
         caption: caption || '',
