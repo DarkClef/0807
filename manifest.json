@@ -1,7 +1,7 @@
 {
   "name": "Sana Dair — Neşe & Mete",
   "short_name": "Sana Dair",
-  "description": "Neşe ve Mete'nin özel web sitesi, albümü, anı haritası ve not defteri",
+  "description": "Neşe ve Mete'nin özel web sitesi, albümü ve not defteri",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#171b34",
