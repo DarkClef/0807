@@ -1663,18 +1663,17 @@
     // ================= 🎮 MİNİ OYUNLAR (MINI GAMES) =================
     function switchGameTab(tabKey, btn) {
       document.querySelectorAll('.game-tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
 
-      document.getElementById('game-wordle').style.display = 'none';
-      document.getElementById('game-xox').style.display = 'none';
-      document.getElementById('game-trivia').style.display = 'none';
-      document.getElementById('game-taprace').style.display = 'none';
-      document.getElementById('game-memory').style.display = 'none';
+      ['wordle', 'xox', 'taprace', 'memory'].forEach(k => {
+        const el = document.getElementById('game-' + k);
+        if (el) el.style.display = 'none';
+      });
 
-      document.getElementById('game-' + tabKey).style.display = 'block';
+      const target = document.getElementById('game-' + tabKey);
+      if (target) target.style.display = 'block';
 
       if (tabKey === 'xox') loadXox();
-      if (tabKey === 'trivia') loadTrivia();
       if (tabKey === 'memory') initMemoryGame();
     }
 
@@ -1792,26 +1791,7 @@
       } catch (err) { console.error(err); }
     }
 
-    // GAME 3: TRIVIA
-    const triviaQuestions = [
-      "İlişkide ilk adımı kim attı?",
-      "Kim daha çok uyur?",
-      "Yemek seçeceğiz zaman kavgayı kim başlatır?",
-      "Kim daha romantiktir?",
-      "Gezilerde haritaya kim bakar?"
-    ];
-    let triviaIdx = 0;
-
-    async function loadTrivia() {
-      document.getElementById('triviaQuestion').textContent = `"${triviaQuestions[triviaIdx]}"`;
-      document.getElementById('triviaResult').textContent = '';
-    }
-
-    async function answerTrivia(ans) {
-      document.getElementById('triviaResult').textContent = `Cevabınız ("${ans}") kaydedildi! Partnerinizin yanıtı bekleniyor ✨`;
-    }
-
-    // GAME 4: TAP RACE
+    // GAME 3: TAP RACE
     let tapScoreP1 = 50;
     let tapScoreP2 = 50;
 
@@ -2047,12 +2027,21 @@
     resizeCanvas();
     requestAnimationFrame(drawStars);
 
-    // SCROLL REVEAL
+    // SCROLL REVEAL (GÖRÜNÜRLÜK GÜVENCESİ)
     const revealEls = document.querySelectorAll('.reveal');
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.1 });
-    revealEls.forEach(el => io.observe(el));
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+      }, { threshold: 0.05 });
+      revealEls.forEach(el => io.observe(el));
+    } else {
+      revealEls.forEach(el => el.classList.add('visible'));
+    }
+
+    // Ekran açılışında tüm ögeleri 100% görünür kılan güvenlik zamanlayıcısı
+    setTimeout(() => {
+      revealEls.forEach(el => el.classList.add('visible'));
+    }, 300);
   </script>
 
 </body>
