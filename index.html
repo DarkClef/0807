@@ -946,7 +946,6 @@
     <ul class="nav-links">
       <li><a href="#together">Birlikteliğimiz</a></li>
       <li><a href="#map-section">Anı Haritası</a></li>
-      <li><a href="#mood-section">Modumuz</a></li>
       <li><a href="#wheel-section">Karar Çarkı</a></li>
       <li><a href="#games-section">Oyunlar</a></li>
       <li><a href="#notes">Ortak Notlar</a></li>
@@ -964,10 +963,6 @@
     <a href="#map-section" class="dock-item">
       <span class="dock-icon">🗺️</span>
       <span>Harita</span>
-    </a>
-    <a href="#mood-section" class="dock-item">
-      <span class="dock-icon">🎲</span>
-      <span>Modumuz</span>
     </a>
     <a href="#wheel-section" class="dock-item">
       <span class="dock-icon">🎡</span>
@@ -1027,63 +1022,6 @@
 
       <div class="map-card-wrap reveal">
         <div id="map"></div>
-      </div>
-    </section>
-
-    <!-- 🎲 RUH HALİ PANOSU (MOOD BOARD) -->
-    <section id="mood-section">
-      <span class="eyebrow reveal">bugün nasılız?</span>
-      <h2 class="reveal">🎲 Ruh Hali Panomuz</h2>
-      <p style="color:var(--lavender); max-width:420px; font-size:0.9rem;" class="reveal">O gün nasıl hissettiğinizi birbirinizle anlık paylaşın.</p>
-
-      <div class="mood-grid reveal">
-        <!-- Neşe Mood Card -->
-        <div class="mood-card" id="cardNese">
-          <span class="mood-avatar" id="avatarNese">🥰</span>
-          <div class="mood-partner-name" style="color:var(--rose);">Neşe</div>
-          <div><span class="mood-text-badge" id="textNese">Çok Mutlu</span></div>
-          <div class="mood-note" id="noteNese">"Seninle olmak harika!"</div>
-          <div style="font-size:0.75rem; color:var(--gold); margin-top:0.4rem;" id="locNese">📍 Ev</div>
-
-          <div class="mood-picker-wrap">
-            <div style="font-size:0.75rem; color:var(--gold); margin-bottom:0.5rem;">Neşe Modunu Seç:</div>
-            <div class="emoji-row">
-              <button class="emoji-btn" onclick="updateNeseMood('🥰', 'Çok Mutlu')">🥰</button>
-              <button class="emoji-btn" onclick="updateNeseMood('😮‍💨', 'Acıktım')">😮‍💨</button>
-              <button class="emoji-btn" onclick="updateNeseMood('💖', 'Aşık')">💖</button>
-              <button class="emoji-btn" onclick="updateNeseMood('☕', 'Kahve Modu')">☕</button>
-              <button class="emoji-btn" onclick="updateNeseMood('😴', 'Yorgun')">😴</button>
-              <button class="emoji-btn" onclick="updateNeseMood('🥺', 'Özledim')">🥺</button>
-            </div>
-            <input type="text" id="inputLocNese" placeholder="📍 Konum (Örn: Ev, Lunapark)" style="width:100%; background:rgba(255,255,255,0.06); border:1px solid var(--line); border-radius:10px; color:#fff; font-size:0.8rem; margin-bottom:0.4rem; padding:0.4rem 0.6rem;">
-            <input type="text" id="inputNoteNese" placeholder="Kısa not ekle..." style="width:100%; background:rgba(255,255,255,0.06); border:1px solid var(--line); border-radius:10px; color:#fff; font-size:0.8rem; margin-bottom:0.6rem; padding:0.4rem 0.6rem;">
-            <button class="btn-nav" style="width:100%; justify-content:center; background:linear-gradient(135deg, var(--rose), #c96b87); border:none;" onclick="saveMoodData('Neşe')">💾 Neşe'nin Modunu Kaydet</button>
-          </div>
-        </div>
-
-        <!-- Mete Mood Card -->
-        <div class="mood-card" id="cardMete">
-          <span class="mood-avatar" id="avatarMete">💖</span>
-          <div class="mood-partner-name" style="color:var(--lavender);">Mete</div>
-          <div><span class="mood-text-badge" id="textMete">Aşık</span></div>
-          <div class="mood-note" id="noteMete">"Seni çok özledim"</div>
-          <div style="font-size:0.75rem; color:var(--gold); margin-top:0.4rem;" id="locMete">📍 Lunapark</div>
-
-          <div class="mood-picker-wrap">
-            <div style="font-size:0.75rem; color:var(--gold); margin-bottom:0.5rem;">Mete Modunu Seç:</div>
-            <div class="emoji-row">
-              <button class="emoji-btn" onclick="updateMeteMood('🥰', 'Çok Mutlu')">🥰</button>
-              <button class="emoji-btn" onclick="updateMeteMood('🤔', 'Düşünüyor')">🤔</button>
-              <button class="emoji-btn" onclick="updateMeteMood('💖', 'Aşık')">💖</button>
-              <button class="emoji-btn" onclick="updateMeteMood('☕', 'Kahve Modu')">☕</button>
-              <button class="emoji-btn" onclick="updateMeteMood('😴', 'Yorgun')">😴</button>
-              <button class="emoji-btn" onclick="updateMeteMood('🥺', 'Özledim')">🥺</button>
-            </div>
-            <input type="text" id="inputLocMete" placeholder="📍 Konum (Örn: Ev, Lunapark)" style="width:100%; background:rgba(255,255,255,0.06); border:1px solid var(--line); border-radius:10px; color:#fff; font-size:0.8rem; margin-bottom:0.4rem; padding:0.4rem 0.6rem;">
-            <input type="text" id="inputNoteMete" placeholder="Kısa not ekle..." style="width:100%; background:rgba(255,255,255,0.06); border:1px solid var(--line); border-radius:10px; color:#fff; font-size:0.8rem; margin-bottom:0.6rem; padding:0.4rem 0.6rem;">
-            <button class="btn-nav" style="width:100%; justify-content:center; background:linear-gradient(135deg, var(--lavender), #6b5b95); border:none;" onclick="saveMoodData('Mete')">💾 Mete'nin Modunu Kaydet</button>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -1477,73 +1415,7 @@
 
     window.addEventListener('load', initMap);
 
-    // ================= 🎲 RUH HALİ PANOSU =================
-    async function loadMoods() {
-      try {
-        const res = await fetch('/api/mood');
-        if (!res.ok) return;
-        const data = await res.json();
 
-        if (data.nese) {
-          document.getElementById('avatarNese').textContent = data.nese.emoji || '🥰';
-          document.getElementById('textNese').textContent = data.nese.text || 'Mutlu';
-          document.getElementById('noteNese').textContent = data.nese.note ? `"${data.nese.note}"` : '';
-          document.getElementById('locNese').textContent = data.nese.location ? `📍 ${data.nese.location}` : '📍 Ev';
-          if (data.nese.location) document.getElementById('inputLocNese').value = data.nese.location;
-          if (data.nese.note) document.getElementById('inputNoteNese').value = data.nese.note;
-        }
-        if (data.mete) {
-          document.getElementById('avatarMete').textContent = data.mete.emoji || '💖';
-          document.getElementById('textMete').textContent = data.mete.text || 'Aşık';
-          document.getElementById('noteMete').textContent = data.mete.note ? `"${data.mete.note}"` : '';
-          document.getElementById('locMete').textContent = data.mete.location ? `📍 ${data.mete.location}` : '📍 Lunapark';
-          if (data.mete.location) document.getElementById('inputLocMete').value = data.mete.location;
-          if (data.mete.note) document.getElementById('inputNoteMete').value = data.mete.note;
-        }
-      } catch (err) { console.error(err); }
-    }
-
-    async function updateNeseMood(emoji, text) {
-      document.getElementById('avatarNese').textContent = emoji;
-      document.getElementById('textNese').textContent = text;
-    }
-
-    async function updateMeteMood(emoji, text) {
-      document.getElementById('avatarMete').textContent = emoji;
-      document.getElementById('textMete').textContent = text;
-    }
-
-    async function saveMoodData(partner) {
-      const isNese = partner === 'Neşe';
-      const emoji = document.getElementById(isNese ? 'avatarNese' : 'avatarMete').textContent;
-      const text = document.getElementById(isNese ? 'textNese' : 'textMete').textContent;
-      const location = document.getElementById(isNese ? 'inputLocNese' : 'inputLocMete').value;
-      const note = document.getElementById(isNese ? 'inputNoteNese' : 'inputNoteMete').value;
-
-      if (location) {
-        document.getElementById(isNese ? 'locNese' : 'locMete').textContent = `📍 ${location}`;
-      }
-      if (note) {
-        document.getElementById(isNese ? 'noteNese' : 'noteMete').textContent = `"${note}"`;
-      }
-
-      try {
-        const res = await fetch('/api/mood', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ partner, emoji, text, location, note })
-        });
-        if (res.ok) {
-          alert(`✨ ${partner}'nin ruh hali başarıyla kaydedildi!`);
-        } else {
-          alert('Kaydederken bir hata oluştu.');
-        }
-      } catch (err) {
-        alert('Bağlantı hatası: ' + err.message);
-      }
-    }
-
-    loadMoods();
 
     // ================= 🎡 KARAR ÇARKI (DECISION WHEEL) =================
     const wheelPresets = {

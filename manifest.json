@@ -20,22 +20,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "widgets": [
-    {
-      "name": "Ruh Hali Widget'ı",
-      "description": "Neşe ve Mete'nin en son ruh halini ana ekranınızda görün",
-      "tag": "mood-widget",
-      "ms_update_period": 3600000,
-      "src": "/widget/mood",
-      "background_color": "#171b34",
-      "screenshots": [
-        {
-          "src": "/icon-192.png",
-          "sizes": "192x192",
-          "label": "Ruh Hali Widget Görünümü"
-        }
-      ]
-    }
   ]
 }
