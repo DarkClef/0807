@@ -1511,6 +1511,8 @@
         } else {
           alert('Kaydederken bir hata oluştu.');
         }
+      } catch (err) {
+        alert('Bağlantı hatası: ' + err.message);
       }
     }
 
