@@ -1,7 +1,7 @@
 {
-  "name": "Sana Dair — Çift Portalı",
+  "name": "Sana Dair — Neşe & Mete",
   "short_name": "Sana Dair",
-  "description": "Sevgilimle ortak özel web sitemiz, albümümüz ve not defterimiz",
+  "description": "Neşe ve Mete'nin özel web sitesi, albümü, anı haritası ve not defteri",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#171b34",
@@ -19,6 +19,23 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "widgets": [
+    {
+      "name": "Ruh Hali Widget'ı",
+      "description": "Neşe ve Mete'nin en son ruh halini ana ekranınızda görün",
+      "tag": "mood-widget",
+      "ms_update_period": 3600000,
+      "src": "/widget/mood",
+      "background_color": "#171b34",
+      "screenshots": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "label": "Ruh Hali Widget Görünümü"
+        }
+      ]
     }
   ]
 }

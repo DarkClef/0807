@@ -26,22 +26,38 @@ module.exports = async function handler(req, res) {
   try {
     const col = await getCollection();
 
-    // ── GET: İki kişinin de son ruh hallerini getir ──────────────────────────
+    // ── GET: Neşe ve Mete'nin son ruh halleri, konum ve fotoğrafları ───────────
     if (req.method === 'GET') {
-      const benMood = await col.findOne({ partner: 'Ben' });
-      const sevgiliMood = await col.findOne({ partner: 'Sevgilim' });
+      const neseMood = await col.findOne({ partner: 'Neşe' });
+      const meteMood = await col.findOne({ partner: 'Mete' });
 
       return res.status(200).json({
-        ben: benMood || { partner: 'Ben', emoji: '🥰', text: 'Çok Mutlu', note: 'Seninle olmak harika!', updatedAt: new Date() },
-        sevgili: sevgiliMood || { partner: 'Sevgilim', emoji: '💖', text: 'Aşık', note: 'Seni çok özledim', updatedAt: new Date() }
+        nese: neseMood || {
+          partner: 'Neşe',
+          emoji: '🥰',
+          text: 'Çok Mutlu',
+          note: 'Seninle olmak harika!',
+          location: 'Ev',
+          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+          updatedAt: new Date()
+        },
+        mete: meteMood || {
+          partner: 'Mete',
+          emoji: '💖',
+          text: 'Aşık',
+          note: 'Seni çok özledim',
+          location: 'Lunapark',
+          avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150',
+          updatedAt: new Date()
+        }
       });
     }
 
-    // ── POST: Kendi ruh halini güncelle ──────────────────────────────────────
+    // ── POST: Ruh halini, konumunu ve profil resmini güncelle ───────────────
     if (req.method === 'POST') {
-      const { partner, emoji, text, note } = req.body || {};
-      if (!partner || (partner !== 'Ben' && partner !== 'Sevgilim')) {
-        return res.status(400).json({ error: 'Geçerli partner seçimi ("Ben" veya "Sevgilim") gereklidir.' });
+      const { partner, emoji, text, note, location, avatarUrl } = req.body || {};
+      if (!partner || (partner !== 'Neşe' && partner !== 'Mete')) {
+        return res.status(400).json({ error: 'Geçerli partner seçimi ("Neşe" veya "Mete") gereklidir.' });
       }
 
       const moodData = {
@@ -49,6 +65,8 @@ module.exports = async function handler(req, res) {
         emoji: emoji || '🥰',
         text: text || 'Mutlu',
         note: (note || '').trim(),
+        location: (location || '').trim(),
+        avatarUrl: avatarUrl || (partner === 'Neşe' ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150' : 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150'),
         updatedAt: new Date()
       };
 
