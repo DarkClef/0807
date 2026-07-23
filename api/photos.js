@@ -1,5 +1,4 @@
 const { MongoClient, ObjectId } = require('mongodb');
-const { validateAuth } = require('./_auth');
 
 // Bağlantı havuzu — serverless fonksiyonlar arasında yeniden kullanılır
 let cachedClient = null;
@@ -17,7 +16,7 @@ async function getCollection() {
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
@@ -28,7 +27,7 @@ module.exports = async function handler(req, res) {
   try {
     const col = await getCollection();
 
-    // ── GET: Tüm fotoğrafları getir (herkese açık) ──────────────────────────
+    // ── GET: Tüm fotoğrafları getir ──────────────────────────────────────────
     if (req.method === 'GET') {
       const photos = await col
         .find({}, { projection: { data: 1, caption: 1, createdAt: 1 } })
@@ -37,17 +36,14 @@ module.exports = async function handler(req, res) {
       return res.status(200).json(photos);
     }
 
-    // ── POST: Fotoğraf yükle (admin yetkisi gerekli) ─────────────────────────
+    // ── POST: Fotoğraf yükle (Doğrudan ana sayfadan) ─────────────────────────
     if (req.method === 'POST') {
-      if (!validateAuth(req)) {
-        return res.status(401).json({ error: 'Yetkisiz erişim' });
-      }
       const { data, caption } = req.body || {};
       if (!data || !data.startsWith('data:image')) {
         return res.status(400).json({ error: 'Geçerli bir fotoğraf verisi gerekli' });
       }
 
-      // Vercel serverless ve MongoDB boyut sınırı kontrolü (~3.5MB max base64)
+      // Vercel serverless ve MongoDB boyut sınırı kontrolü (~4MB max base64)
       if (data.length > 4 * 1024 * 1024) {
         return res.status(413).json({ error: 'Fotoğraf boyutu çok yüksek. Yüklenmeden önce sıkıştırılmalıdır.' });
       }
@@ -60,11 +56,8 @@ module.exports = async function handler(req, res) {
       return res.status(201).json({ _id: result.insertedId });
     }
 
-    // ── DELETE: Fotoğraf sil (admin yetkisi gerekli) ──────────────────────────
+    // ── DELETE: Fotoğraf sil (Doğrudan ana sayfadan) ─────────────────────────
     if (req.method === 'DELETE') {
-      if (!validateAuth(req)) {
-        return res.status(401).json({ error: 'Yetkisiz erişim' });
-      }
       const { id } = req.query;
       if (!id || !ObjectId.isValid(id)) {
         return res.status(400).json({ error: 'Geçersiz fotoğraf ID\'si' });
