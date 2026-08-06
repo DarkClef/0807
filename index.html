@@ -56,6 +56,24 @@
       padding-bottom: 80px; /* space for mobile bottom dock */
     }
 
+    .sub-pill {
+      background: rgba(232, 183, 94, 0.12);
+      border: 1px solid rgba(232, 183, 94, 0.3);
+      color: var(--gold);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+    }
+    .sub-pill strong {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.05rem;
+      color: var(--cream);
+      margin-right: 0.3rem;
+    }
+
     #stars {
       position: fixed;
       top: 0;
@@ -1002,6 +1020,12 @@
         <div class="flip"><div class="num" id="tg-secs">00</div><div class="lbl">saniye</div></div>
       </div>
 
+      <div class="counter-breakdown reveal" id="counterBreakdown" style="display:flex; justify-content:center; gap:0.6rem; margin-top:1.2rem; flex-wrap:wrap;">
+        <span class="sub-pill"><strong id="tg-months">0</strong> ay</span>
+        <span class="sub-pill"><strong id="tg-weeks">0</strong> hafta</span>
+        <span class="sub-pill"><strong id="tg-remdays">0</strong> gün</span>
+      </div>
+
       <p class="fun-stat reveal" id="funStat">yaklaşık 0 kalp atışı, seninle birlikte attı</p>
     </section>
 
@@ -1061,9 +1085,10 @@
 
           <div class="wordle-grid" id="wordleGrid"></div>
 
-          <div style="display:flex; gap:0.4rem; justify-content:center; margin-top:1rem;">
-            <input type="text" id="wordleInput" maxlength="5" placeholder="5 harfli kelime" style="width:140px; text-transform:uppercase; text-align:center; background:rgba(255,255,255,0.06); border:1px solid var(--line); border-radius:10px; color:#fff; font-family:'Space Mono',monospace; font-size:1.1rem; padding:0.4rem;">
+          <div style="display:flex; gap:0.4rem; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:1rem;">
+            <input type="text" id="wordleInput" maxlength="5" placeholder="5 harfli kelime" style="width:140px; text-transform:uppercase; text-align:center; background:rgba(255,255,255,0.06); border:1px solid var(--line); border-radius:10px; color:#fff; font-family:'Space Mono',monospace; font-size:1.1rem; padding:0.4rem;" onkeydown="if(event.key==='Enter') submitWordleGuess()">
             <button class="btn-nav" onclick="submitWordleGuess()">Tahmin Et</button>
+            <button class="btn-nav" style="background:rgba(232,147,168,0.18); border-color:var(--rose); color:var(--cream);" onclick="startNewWordleGame()">🎲 Yeni Kelime</button>
           </div>
           <div id="wordleMsg" style="font-size:0.82rem; margin-top:0.6rem; min-height:1.2em; color:var(--rose);"></div>
         </div>
@@ -1297,6 +1322,30 @@
       return { days, hours, mins, secs };
     }
 
+    function diffMonthsWeeksDays(from, to) {
+      if (to < from) return { months: 0, weeks: 0, days: 0 };
+      let months = 0;
+      let temp = new Date(from);
+
+      while (true) {
+        let nextMonth = new Date(temp);
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+        if (nextMonth <= to) {
+          months++;
+          temp = nextMonth;
+        } else {
+          break;
+        }
+      }
+
+      const remMs = to - temp;
+      const totalDays = Math.floor(remMs / (1000 * 60 * 60 * 24));
+      const weeks = Math.floor(totalDays / 7);
+      const days = totalDays % 7;
+
+      return { months, weeks, days };
+    }
+
     function tick() {
       const now = new Date();
       const tg = diffParts(TOGETHER_SINCE, now);
@@ -1304,6 +1353,14 @@
       document.getElementById('tg-hours').textContent = pad(tg.hours);
       document.getElementById('tg-mins').textContent = pad(tg.mins);
       document.getElementById('tg-secs').textContent = pad(tg.secs);
+
+      const mwd = diffMonthsWeeksDays(TOGETHER_SINCE, now);
+      const elM = document.getElementById('tg-months');
+      const elW = document.getElementById('tg-weeks');
+      const elD = document.getElementById('tg-remdays');
+      if (elM) elM.textContent = mwd.months;
+      if (elW) elW.textContent = mwd.weeks;
+      if (elD) elD.textContent = mwd.days;
 
       const totalMinutes = Math.floor((now - TOGETHER_SINCE) / 60000);
       const heartbeats = Math.max(0, totalMinutes) * 78;
@@ -1474,14 +1531,71 @@
       if (tabKey === 'memory') initMemoryGame();
     }
 
-    // GAME 1: WORDLE
-    const secretWord = "SEVGİ";
+    // GAME 1: WORDLE / KELİMECE
+    const WORDLE_WORDS = [
+      "AŞKIM","SEVGİ","MELEK","HAYAT","GÜNEŞ","BAHAR","BAKIŞ","GÜLÜŞ","MUTLU","GÜZEL",
+      "HUZUR","YÜREK","TATLI","GÖNLÜ","DUYGU","MASAL","SEVDA","DENİZ","ÇİÇEK","DÜNYA",
+      "BARIŞ","PAMUK","ŞEKER","CANIM","NEFES","NİYET","CADDE","RUHUM","GÜLÜM","DİLEK",
+      "SİHİR","BEBEK","YOLUM","PEMBE","KALBİ","AHŞAP","AKŞAM","ALARM","ALKIŞ","ELMAS",
+      "ALTIN","ANLAM","ARABA","ARAMA","ARŞİV","ASLAN","ASTAR","ATLAS","AYDIN","AYRAÇ",
+      "BAGAJ","BAHÇE","BAKIR","BALIK","BALON","BANKA","BANYO","BARON","BASKI","BASTON",
+      "BAVUL","BAYIR","BEDEN","BEKÇİ","BELGE","BENEK","BERAT","BESTE","BEYAZ","BEYİN",
+      "BİÇİM","BİLGİ","BİLET","BİTKİ","BOĞAZ","BOYUT","BÖCEK","BÖLGE","BRONZ","BULUT",
+      "BUKET","BURUN","BÜTÇE","BÜYÜK","CAMİA","CANLI","CEVAP","CEVİZ","CEZVE","CİHAZ",
+      "CÜMLE","ÇABUK","ÇAĞRI","ÇALGI","ÇANTA","ÇARŞI","ÇAYIR","ÇEKİÇ","ÇEVRE","ÇİMEN",
+      "ÇİZGİ","ÇOCUK","ÇORBA","ÇÖZÜM","DAĞCI","DALGA","DAMLA","DAMAR","DESTE","DEĞER",
+      "DENEY","DERGİ","DERİN","DESEN","DİKİŞ","DİLİM","DİREN","DOĞAL","DOĞRU","DOLAP",
+      "DOSTU","DURUM","DÜĞÜN","DÜĞME","DÜZEN","DÜZEY","EKRAN","EKSİK","EMLAK","ENGEL",
+      "ERKEK","ESNAF","EVREN","EYLEM","FAZLA","FENER","FIRIN","FİKİR","FİLİZ","FİNAL",
+      "FLÖRT","FORMA","GELİN","GENEL","GENİŞ","GİTAR","GÖLGE","GÖNÜL","GÖREV","GÖRÜŞ",
+      "GÖZDE","GÜÇLÜ","GÜMÜŞ","GÜVEN","HABER","HACİM","HAFTA","HAKLI","HALKA","HALAT",
+      "HAMLE","HASAT","HAYAL","HAZİN","HEDEF","HEKİM","HEVES","HIZLI","HİLAL","HOROZ",
+      "IRMAK","İÇERİ","İÇTEN","İDDİA","İFADE","İLERİ","İLHAM","İLMİK","İNCİR","İNSAN",
+      "İSTEK","İŞLEM","KABAK","KABUL","KADIN","KADRO","KAĞIT","KAHVE","KALEM","KALIP",
+      "KALAN","KAMER","KAMIŞ","KANAL","KANAT","KANIT","KANUN","KARAR","KARGO","KARŞI",
+      "KASET","KASAP","KAŞIK","KATLI","KAVGA","KAVUN","KAYAK","KAYGI","KAYIK","KAZAN",
+      "KAZAK","KEMAL","KEMER","KEMİK","KENAR","KESİN","KEŞİF","KILIÇ","KILIF","KISIM",
+      "KIŞLA","KİLİM","KİLİT","KİTAP","KİTLE","KLİMA","KOLAY","KOMŞU","KONAK","KONUK",
+      "KONUM","KOPYA","KORKU","KÖPÜK","KÖPRÜ","KREDİ","KREMA","KUKLA","KULAÇ","KULAK",
+      "KULÜP","KUMAŞ","KUPON","KURAL","KURUM","KURUŞ","KUŞAK","KUTLU","KÜÇÜK","KÜMES",
+      "KÜREK","KÜRSÜ","KÜTLE","KÜTÜK","LAMBA","LEYLA","LİDER","LİMAN","LİMON","LİSTE",
+      "LOKMA","MADEN","MADDE","MAHAL","MAKUL","MANGO","MARKA","MASKE","MAYIS","MEDYA",
+      "MEKAN","MEMUR","MERAK","MERMİ","MESAJ","MESAİ","MESUT","METİN","METRO","MEVZU",
+      "MEYVE","MİMAR","MİZAH","MODEL","MOTOR","MUHİT","MÜDÜR","MÜZİK","NAKİT","NAKIŞ",
+      "NAZAR","NEFİS","NEHİR","NESİL","NESNE","NİKAH","NİMET","NİSAN","NİZAM","NÖBET",
+      "NUTUK","OĞLAN","ORMAN","ORTAK","ÖNERİ","ÖRNEK","ÖZGÜR","ÖZLEM","PALET","PALTO",
+      "PANEL","PARÇA","PARKA","PASTA","PAZAR","PELİN","PERDE","PERON","PETEK","PINAR",
+      "PİYON","POLİS","POMPA","POŞET","POSTA","PRENS","PROJE","RADYO","RAKAM","RAKİP",
+      "RALLİ","RAPOR","REKOR","RESİM","REŞİT","ROMAN","SABAH","SABIR","SABUN","SAHİL",
+      "SAHNE","SAHİP","SAKAL","SAKLI","SALON","SALÇA","SANAT","SARAY","SARGI","SARMA",
+      "SAVAŞ","SAYFA","SAYGI","SEBEP","SEBZE","SEÇİM","SEDİR","SEFER","SEVER","SEYİR",
+      "SEZON","SICAK","SINIF","SINIR","SİLAH","SİMGE","SİYAH","SOĞAN","SOĞUK","SOKAK",
+      "SOLUK","SONRA","SORUN","SOYLU","SÖZCÜ","STRES","SUNUM","SURET","SUSAM","ŞAHİN",
+      "ŞARAP","ŞARKI","ŞEHİR","ŞEKİL","ŞERİF","ŞİRİN","ŞOFÖR","ŞÖLEN","TABAK","TABLO",
+      "TAHTA","TAKIM","TAKSİ","TALEP","TAMAM","TAMİR","TANIM","TANIT","TARAF","TARIM",
+      "TARİH","TARİF","TARLA","TAVAN","TAVIR","TAVUK","TEKİN","TELİF","TEMEL","TEMİZ",
+      "TEORİ","TEPSİ","TERAS","TERZİ","TESİS","TEYZE","TOHUM","TOKAT","TOPLU","TORBA",
+      "TORUN","TÜNEL","TÜREV","TÜRKÜ","UNVAN","UYARI","UYGUN","UZMAN","ÜCRET","ÜÇGEN",
+      "ÜNİTE","ÜSTÜN","VAGON","VAKİT","VALİZ","VASAT","VASIF","VEKİL","VERGİ","VERİM",
+      "VEZİR","VİDEO","VİLLA","VİRÜS","VİŞNE","VİTES","VURGU","VÜCUT","YAKIN","YAKUT",
+      "YALAN","YALIN","YANIT","YAPIT","YARAR","YARIN","YARIŞ","YAŞAM","YASAK","YAVRU",
+      "YAYIN","YAZAR","YELEK","YEMEK","YEMİN","YENGE","YEREL","YEŞİL","YETKİ","YIKIM",
+      "YIĞIN","YİĞİT","YOLCU","YORUM","YÜZEY","YÜZÜK","ZAMAN","ZARAR","ZAYIF","ZEBRA","ZİRVE"
+    ];
+
+    function getDailyWord() {
+      const dayIndex = Math.floor(new Date().setHours(0,0,0,0) / 86400000);
+      return WORDLE_WORDS[Math.abs(dayIndex) % WORDLE_WORDS.length];
+    }
+
+    let secretWord = getDailyWord();
     let wordleAttempts = [];
 
     function initWordleGrid() {
       const grid = document.getElementById('wordleGrid');
+      if (!grid) return;
       grid.innerHTML = '';
-      for (let r = 0; r < 5; r++) {
+      for (let r = 0; r < 6; r++) {
         const row = document.createElement('div');
         row.className = 'wordle-row';
         for (let c = 0; c < 5; c++) {
@@ -1493,37 +1607,74 @@
         grid.appendChild(row);
       }
     }
+
+    function startNewWordleGame() {
+      const randomIndex = Math.floor(Math.random() * WORDLE_WORDS.length);
+      secretWord = WORDLE_WORDS[randomIndex];
+      wordleAttempts = [];
+      const msg = document.getElementById('wordleMsg');
+      if (msg) msg.textContent = 'Yeni kelime seçildi! Bol şans 🍀';
+      const input = document.getElementById('wordleInput');
+      if (input) { input.value = ''; input.disabled = false; }
+      initWordleGrid();
+    }
+
     initWordleGrid();
 
     function submitWordleGuess() {
       const input = document.getElementById('wordleInput');
-      const val = input.value.trim().toUpperCase();
+      const val = input.value.trim().toLocaleUpperCase('tr-TR');
       const msg = document.getElementById('wordleMsg');
 
-      if (val.length !== 5) { msg.textContent = 'Lütfen 5 harfli bir kelime yazın.'; return; }
-      if (wordleAttempts.length >= 5) { msg.textContent = 'Tahmin hakkınız bitti!'; return; }
+      if ([...val].length !== 5) { msg.textContent = 'Lütfen 5 harfli bir kelime yazın.'; return; }
+      if (wordleAttempts.length >= 6) { msg.textContent = 'Tahmin hakkınız bitti!'; return; }
 
       const r = wordleAttempts.length;
       wordleAttempts.push(val);
 
+      const secretChars = [...secretWord];
+      const valChars = [...val];
+      const status = Array(5).fill('absent');
+      const secretCounts = {};
+
+      secretChars.forEach(ch => {
+        secretCounts[ch] = (secretCounts[ch] || 0) + 1;
+      });
+
+      valChars.forEach((ch, idx) => {
+        if (ch === secretChars[idx]) {
+          status[idx] = 'correct';
+          secretCounts[ch]--;
+        }
+      });
+
+      valChars.forEach((ch, idx) => {
+        if (status[idx] !== 'correct') {
+          if (secretCounts[ch] && secretCounts[ch] > 0) {
+            status[idx] = 'present';
+            secretCounts[ch]--;
+          }
+        }
+      });
+
       for (let c = 0; c < 5; c++) {
         const cell = document.getElementById(`w-${r}-${c}`);
-        cell.textContent = val[c];
-        if (val[c] === secretWord[c]) {
-          cell.classList.add('correct');
-        } else if (secretWord.includes(val[c])) {
-          cell.classList.add('present');
-        } else {
-          cell.classList.add('absent');
+        if (cell) {
+          cell.textContent = valChars[c];
+          cell.className = 'wordle-cell ' + status[c];
         }
       }
 
       input.value = '';
 
       if (val === secretWord) {
-        msg.textContent = '🎉 TEBRİKLER! Günün aşk kelimesini buldunuz! ♥';
-      } else if (wordleAttempts.length === 5) {
-        msg.textContent = 'Kelime: ' + secretWord;
+        msg.textContent = '🎉 TEBRİKLER! Kelimeyi buldunuz: ' + secretWord + ' ♥';
+        input.disabled = true;
+      } else if (wordleAttempts.length >= 6) {
+        msg.textContent = 'Tahmin hakkınız doldu. Doğru kelime: ' + secretWord;
+        input.disabled = true;
+      } else {
+        msg.textContent = `Kalan tahmin hakkı: ${6 - wordleAttempts.length}`;
       }
     }
 
@@ -1696,7 +1847,9 @@
         card.innerHTML = `
           <div class="note-header">
             <span class="note-tag">${catBadges[note.category] || '📝 Not'}</span>
-            ${note.pinned ? '📌' : ''}
+            <button class="btn-nav" style="padding:0.2rem 0.5rem; font-size:0.75rem; background:${note.pinned ? 'rgba(232,183,94,0.25)' : 'transparent'}; border-color:${note.pinned ? 'var(--gold)' : 'var(--line)'}; color:${note.pinned ? 'var(--gold)' : 'var(--lavender)'};" onclick="togglePinNote('${note._id}', ${!note.pinned})">
+              ${note.pinned ? '📌 Sabitlendi' : '📍 Sabitle'}
+            </button>
           </div>
           ${note.title ? `<div class="note-title">${escapeHtml(note.title)}</div>` : ''}
           <div class="note-body">${escapeHtml(note.content)}</div>
@@ -1709,6 +1862,20 @@
         `;
         grid.appendChild(card);
       });
+    }
+
+    async function togglePinNote(id, newPinnedState) {
+      try {
+        const res = await fetch('/api/notes?id=' + id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pinned: newPinnedState })
+        });
+        if (!res.ok) throw new Error('Pinleme işlemi gerçekleştirilemedi.');
+        await loadNotes();
+      } catch (err) {
+        alert(err.message);
+      }
     }
 
     function filterNotes(cat, btn) {
